@@ -1,0 +1,125 @@
+"use client";
+import { ScrollLockContext } from "@/LockContext/LockContext";
+import { CloseOutlined } from "@mui/icons-material";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
+const bg = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: { ease: "easeInOut", duration: 0.2 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { ease: "easeInOut", duration: 0.2 },
+  },
+};
+
+const search = {
+  initial: {
+    height: 0,
+  },
+  animate: {
+    height: "auto",
+    transition: { ease: "easeInOut", duration: 0.3 },
+  },
+  exit: {
+    height: 0,
+    transition: { ease: "easeInOut", duration: 0.3 },
+  },
+};
+
+function Search() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  const { locks, lockScroll, unlockScroll } = useContext(ScrollLockContext);
+
+  useEffect(() => {
+    if (isOpen) {
+      lockScroll();
+    } else {
+      setTimeout(() => {
+        unlockScroll();
+      }, 300);
+    }
+  }, [isOpen, lockScroll, unlockScroll]);
+
+  useEffect(() => {
+    if (locks > 2 || pathname !== prevPathname) {
+      setIsOpen(false);
+    }
+    setPrevPathname(pathname);
+  }, [locks, pathname]);
+
+  const ProductSearchQuery = query.toLowerCase();
+
+  const handleClick = () => {
+    router.push(`/Search?query=${ProductSearchQuery}`);
+    setIsOpen(false);
+  };
+
+  return (
+    <div>
+      {!isOpen ? (
+        <Image
+          onClick={() => setIsOpen(!isOpen)}
+          src="/search.svg"
+          alt="search"
+          width={26}
+          height={26}
+          className="object-contain cursor-pointer"
+        />
+      ) : (
+        <CloseOutlined
+          onClick={() => setIsOpen(!isOpen)}
+          className="cursor-pointer"
+        />
+      )}
+      <AnimatePresence mode="wait">
+        {isOpen && (
+          <motion.div
+            className="bg-[#00000054] h-[100vh] w-[100%] absolute z-30 top-[59px] lg:top-[104px] left-0"
+            variants={bg}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <hr />
+            <motion.div
+              className="flex items-center justify-center w-[100%] bg-white"
+              variants={search}
+            >
+              <div className="relative w-[85%] lg:w-[65%] h-[10vh] lg:h-[15vh] flex items-center justify-center">
+                <input
+                  required
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  type="text"
+                  placeholder="Search... "
+                  className="w-[100%] outline-none border-b-[1px] transition-colors duration-500 focus:border-black placeholder:text-2xl placeholder:text-black placeholder:font-[300]"
+                />
+
+                <Image
+                  src="/search.svg"
+                  alt="search"
+                  width={26}
+                  height={26}
+                  onClick={handleClick}
+                  className="object-contain cursor-pointer absolute right-0 top-[35%]"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export default Search;
