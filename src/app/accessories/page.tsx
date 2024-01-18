@@ -236,7 +236,7 @@ function ProductCollection() {
             />
           </div>
         </div>
-        <div className="flex-[3] flex flex-col">
+        <div className="flex-[3] flex flex-col min-h-[100vh]">
           <div className="flex  flex-wrap items-center justify-center">
             {ProductsList?.map((item, i) => (
               <motion.div

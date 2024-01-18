@@ -209,7 +209,6 @@ function ProductCollection() {
           <></>
         )}
       </div>
-
       <Filters
         notWatches={false}
         setProductSort={setProductSort}
@@ -238,7 +237,7 @@ function ProductCollection() {
             />
           </div>
         </div>
-        <div className="flex-[3] flex flex-col">
+        <div className="min-h-[100vh] flex-[3] flex flex-col">
           <div className="flex flex-wrap items-center justify-center">
             {productsList?.map((item, i) => (
               <motion.div

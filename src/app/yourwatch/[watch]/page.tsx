@@ -333,6 +333,9 @@ function YourWatch({ params }: YourWatchProps) {
 
       // Update the cart state with the new cart data
       setCart(data.cartLinesAdd.cart);
+    } else {
+      setErr(true);
+      setErrMsg("something went wrong while adding this item to the cart");
     }
     setAddingItem(false);
   };
@@ -348,7 +351,7 @@ function YourWatch({ params }: YourWatchProps) {
       <AnimatePresence mode="wait">
         {err && (
           <motion.div
-            className="absolute flex items-center justify-center gap-2 top-[5%] left-[35%] bg-black h-auto w-auto py-1 px-2 rounded-xl z-10"
+            className="absolute flex items-center justify-center gap-2 top-[5%] left-[3.5%] md:left-[25%] lg:left-[35%] bg-black h-auto w-auto py-1 px-2 rounded-xl z-10"
             variants={msg}
             initial="initial"
             animate="animate"
@@ -364,7 +367,7 @@ function YourWatch({ params }: YourWatchProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="h-[100vh] flex lg:flex-row flex-col items-center justify-center bg-[#f2f2f2]">
+      <div className="lg:h-[600px] h-[768px] flex lg:flex-row flex-col items-center justify-center bg-[#f2f2f2]">
         <div className="flex flex-[1] h-[100%] w-[100vw] lg:w-[50vw]">
           {singleProduct?.images.edges.length! > 1 && (
             <div className="flex-[1.2] md:flex-[1.5] flex flex-col items-center justify-center gap-5">

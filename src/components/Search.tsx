@@ -95,7 +95,7 @@ function Search() {
               className="flex items-center justify-center w-[100%] bg-white"
               variants={search}
             >
-              <div className="relative w-[85%] lg:w-[65%] h-[10vh] lg:h-[15vh] flex items-center justify-center">
+              <div className="relative w-[85%] lg:w-[65%] h-[90px] flex items-center justify-center">
                 <input
                   required
                   value={query}

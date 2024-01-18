@@ -5,6 +5,9 @@ import { countries } from "./Data";
 import gql from "graphql-tag";
 import { storeFront } from "../../utils";
 import { print } from "graphql";
+import Loader from "./Loader";
+import { CloseOutlined } from "@mui/icons-material";
+import { AnimatePresence, motion } from "framer-motion";
 
 type FormData = {
   streetAddress: string;
@@ -60,7 +63,9 @@ function AddressForm() {
   const [value, setValue] = useState("United States");
   const [customerToken, setCustomerToken] = useState();
   const [customerId, setCustomerId] = useState();
-  const [errMsg, setErrMsg] = useState<undefined | string>();
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState<undefined | string>();
+  const [popUp, setPopUp] = useState(false);
   //console.log(customerId);
   //console.log(customerToken);
   useEffect(() => {
@@ -77,8 +82,11 @@ function AddressForm() {
       //console.log(data);
       setCustomerId(data?.customer?.addresses?.edges[0]?.node?.id);
       if (errors) {
-        setErrMsg(
-          () => errors && "We were unable to retrieve your customer record."
+        setPopUp(true);
+        setMsg(
+          errors
+            ? errors[0].message
+            : "We were unable to retrieve your customer record."
         );
       }
     };
@@ -94,6 +102,7 @@ function AddressForm() {
     //console.log(formData);
     const { streetAddress, homeAddress, city, country, zip } = formData;
     if (customerId) {
+      setLoading(true);
       const { data, errors } = await storeFront(print(customerAddress), {
         id: customerId,
         customerAccessToken: customerToken,
@@ -106,17 +115,23 @@ function AddressForm() {
           zip: zip,
         },
       });
+
       if (errors) {
-        setErrMsg(() =>
+        setPopUp(true);
+        setMsg(
           errors
             ? errors[0]?.message
             : "Your shipping address is not in our records. Please note, a prior completed order is necessary for updating it."
         );
+      } else {
+        setPopUp(true);
+        setMsg("Your shipping address has been successfully updated");
       }
+      setLoading(false);
     } else {
-      setErrMsg(
-        "Your shipping address is not in our records. Please note, a prior completed order is necessary for updating it."
-      );
+      setPopUp(true);
+      setMsg("We were unable to retrieve your customer record.");
+      setLoading(false);
     }
 
     //console.log(data, errors);
@@ -124,12 +139,30 @@ function AddressForm() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col items-center justify-center relative">
       <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-4xl font-[300] tracking-[3px]">
         Shipping Address
       </h1>
+      <AnimatePresence mode="wait">
+        {popUp && (
+          <motion.div
+            className="absolute flex items-center justify-center gap-2 top-[35%] bg-black py-1 px-2 rounded-xl z-10"
+            initial={{ y: 0, opacity: 0 }}
+            animate={{ y: "100%", opacity: 1, transition: { type: "tween" } }}
+            exit={{ y: 0, opacity: 0, transition: { type: "tween" } }}
+          >
+            <span className="text-white text-xs font-[300] capitalize text-center">
+              {msg}
+            </span>
+            <CloseOutlined
+              className="text-white cursor-pointer"
+              onClick={() => setPopUp(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <form
-        className="flex flex-col items-center h-[60vh] lg:h-[100vh] md:h-[60vh] justify-evenly"
+        className="flex flex-col items-center h-[600px] justify-evenly"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="input-group2 flex flex-col">
@@ -215,14 +248,18 @@ function AddressForm() {
           )}
         </div>
         <button
+          disabled={popUp}
           type="submit"
-          className="mx-auto btn-secondary uppercase text-lg h-12 w-[90vw] md:w-[50vw] lg:w-[30vw] border border-gray-400"
+          className="disabled:opacity-50 mx-auto btn-secondary uppercase text-lg h-12 w-[90vw] md:w-[50vw] lg:w-[30vw] border border-gray-400"
         >
-          change
+          {loading ? (
+            <div className="h-[100%] w-[100%] flex items-center justify-center">
+              <Loader />
+            </div>
+          ) : (
+            "change"
+          )}
         </button>
-        <span className="font-[400] text-xs text-[#c40d2e] text-center">
-          {errMsg}
-        </span>
       </form>
     </div>
   );

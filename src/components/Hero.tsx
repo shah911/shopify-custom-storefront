@@ -98,7 +98,7 @@ function Hero() {
           (item, i) =>
             i === activeIndex && (
               <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[45vh] lg:h-[100vh] overflow-hidden">
+                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[600px] overflow-hidden">
                   <motion.div
                     className="relative h-[100%] w-[100%]"
                     variants={mainImg}
@@ -115,7 +115,7 @@ function Hero() {
                     />
                   </motion.div>
                 </div>
-                <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[20vh] md:w-[50vw] md:h-[45vh] lg:h-[100vh] gap-5">
+                <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[180px] md:w-[50vw] md:h-[450px] lg:h-[600px] gap-5">
                   <motion.div
                     className="lg:w-[75vw] h-[100%] flex flex-col items-center justify-center gap-5"
                     variants={desc}
@@ -126,8 +126,8 @@ function Hero() {
                     <div
                       className={`relative ${
                         i === 1
-                          ? "w-[20vw] h-[25vh] lg:h-[60vh] hidden md:flex"
-                          : "w-[25vw] h-[12.5vh] lg:h-[30vh] hidden md:flex"
+                          ? "w-[20vw] h-[25vh] lg:h-[360px] hidden md:flex"
+                          : "w-[25vw] h-[12.5vh] lg:h-[180px] hidden md:flex"
                       }`}
                     >
                       <Image
@@ -155,8 +155,7 @@ function Hero() {
             )
         )}
       </AnimatePresence>
-
-      <div className="flex items-center justify-center gap-4 absolute top-[74%] md:top-[47%] lg:top-[110%] 2xl:top-[105%] left-0 right-0">
+      <div className="flex items-center justify-center gap-4 absolute top-[715px] md:top-[475px] lg:top-[650px] left-0 right-0">
         <div className="cursor-pointer" onClick={() => setPlay(!play)}>
           {play ? (
             <PauseOutlined className="text-[#555555]" />

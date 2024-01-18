@@ -60,14 +60,20 @@ function UserUpdate() {
     if (errors) {
       setPopUp(true);
       setMsg(
-        () =>
-          errors[0]?.message ||
-          "We were unable to update your username and email. Please attempt again later."
+        errors
+          ? errors[0]?.message
+          : "We were unable to update your username and email. Please attempt again later."
       );
+      setLoading(false);
+    } else if (data) {
+      setPopUp(true);
+      setMsg("Your username and email have been successfully updated.");
       setLoading(false);
     } else {
       setPopUp(true);
-      setMsg("Your username and email have been successfully updated.");
+      setMsg(
+        "We were unable to update your username and email. Please attempt again later."
+      );
       setLoading(false);
     }
 
@@ -76,14 +82,14 @@ function UserUpdate() {
   };
 
   return (
-    <div className="h-[45vh] lg:h-[65vh] flex flex-col justify-evenly relative">
+    <div className="h-[500px] md:h-[450px] lg:h-[600px] flex flex-col items-center justify-center relative">
       <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-4xl font-[300] tracking-[3px]">
         ACCOUNT INFORMATION
       </h1>
       <AnimatePresence mode="wait">
         {popUp && (
           <motion.div
-            className="absolute flex items-center justify-center gap-2 top-[-15%] md:top-[-10%] lg:top-[-15%] lg:left-[21%] bg-black py-1 px-2 rounded-xl z-10"
+            className="absolute flex items-center justify-center gap-2 top-[2%] bg-black py-1 px-2 rounded-xl z-10"
             initial={{ y: 0, opacity: 0 }}
             animate={{ y: "100%", opacity: 1, transition: { type: "tween" } }}
             exit={{ y: 0, opacity: 0, transition: { type: "tween" } }}
@@ -100,7 +106,7 @@ function UserUpdate() {
       </AnimatePresence>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="h-[70%] flex flex-col items-center justify-evenly"
+        className="h-[50%] flex flex-col items-center justify-evenly"
       >
         <div className="input-group2 flex flex-col">
           <input
@@ -144,7 +150,10 @@ function UserUpdate() {
             </span>
           )}
         </div>
-        <button className="mx-auto btn-secondary uppercase text-lg h-12 w-[90vw] md:w-[70vw] lg:w-[30vw] border border-gray-400">
+        <button
+          disabled={popUp}
+          className="disabled:opacity-50 mx-auto btn-secondary uppercase text-lg h-12 w-[90vw] md:w-[70vw] lg:w-[30vw] border border-gray-400"
+        >
           {loading ? (
             <div className="h-[100%] w-[100%] flex items-center justify-center">
               <Loader />

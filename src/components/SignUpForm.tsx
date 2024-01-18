@@ -57,7 +57,7 @@ function SignUpForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const [errorMsg, setErrorMsg] = useState();
+  const [errorMsg, setErrorMsg] = useState<undefined | string>();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -71,7 +71,6 @@ function SignUpForm() {
 
     const userErrorMessage =
       data?.customerCreate?.customerUserErrors[0]?.message;
-    setErrorMsg(() => (errors ? errors[0].message : userErrorMessage));
 
     if (data?.customerCreate?.customer?.id) {
       const res = await storeFront(print(CustomerAccessToken), {
@@ -86,13 +85,19 @@ function SignUpForm() {
       );
       //console.log(res.data.customerAccessTokenCreate.customerAccessToken);
       router.push("/");
+    } else if (errors) {
+      setErrorMsg(() => (errors ? errors[0].message : userErrorMessage));
+    } else {
+      setErrorMsg(
+        "something went wrong while sign up. Please trt again later."
+      );
     }
     setLoading(false);
     //console.log(data);
   };
 
   return (
-    <div className="h-[60vh] md:h-[50vh] lg:h-[100vh] flex flex-col items-center justify-center">
+    <div className="h-[600px] flex flex-col items-center justify-center">
       <div
         className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] ${
           loading ? "opacity-[1] z-10" : "opacity-0 z-[-10]"

@@ -127,43 +127,45 @@ function ProductsSlider({ title, ProductsList }: Props) {
   return !ProductsList ? (
     <ErrPage />
   ) : (
-    <div className="h-[100vh] lg:h-[150vh] flex flex-col items-center justify-evenly">
-      <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
-        {title}
-      </h1>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-sm text-center text-[#555555] font-[300] mx-auto w-[90%]">
-            {show
-              ? `${ProductsList?.edges[0].node.description.substring(
-                  0,
-                  maxChars
-                )}...`
-              : ProductsList?.edges[0].node.description}
-          </p>
-          {desc && (
-            <button onClick={() => setShow(!show)} className="btn">
-              {show ? "Read more" : "Show less"}
-            </button>
-          )}
-        </div>
-      )}
+    <div className="h-[840px] flex flex-col items-center justify-evenly">
+      <div className="flex flex-col items-center justify-center gap-6">
+        <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
+          {title}
+        </h1>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-sm text-center text-[#555555] font-[300] mx-auto w-[90%]">
+              {show
+                ? `${ProductsList?.edges[0].node.description.substring(
+                    0,
+                    maxChars
+                  )}...`
+                : ProductsList?.edges[0].node.description}
+            </p>
+            {desc && (
+              <button onClick={() => setShow(!show)} className="btn">
+                {show ? "Read more" : "Show less"}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
       <hr className="w-[90%]" />
       <div
         ref={sliderRef}
         onScroll={handleScroll}
-        className="h-[50vh] lg:h-[60vh] w-[100%] flex overflow-x-scroll scrollbar-hide snap-scroll"
+        className="w-[100%] flex overflow-x-scroll scrollbar-hide snap-scroll"
       >
         {Products?.edges.map((item: ProductNode) => (
           <div
             key={item.node.handle}
-            className="flex flex-col items-center justify-evenly snap-start"
+            className="h-[400px] flex flex-col items-center justify-evenly snap-start"
           >
             <Link
               href={`/yourwatch/${item.node.handle}`}
-              className="p-4 h-[25vh] w-[50vw] md:w-[33.33vw] lg:h-[45vh] lg:w-[25vw] 2xl:w-[20vw] relative"
+              className="p-4 h-[350px] lg:h-[270px] w-[50vw] md:w-[33.33vw] lg:w-[25vw] 2xl:w-[20vw] relative"
             >
               <Image
                 src={item.node.images.edges[0]?.node?.url}

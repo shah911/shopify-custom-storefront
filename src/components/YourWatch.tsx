@@ -12,7 +12,7 @@ const data = [
 
 function YourWatch() {
   return (
-    <div className="flex flex-col h-[100%] justify-around bg-white">
+    <div className="flex flex-col h-[500px] justify-around bg-white">
       <div className="flex">
         <div className="flex-[1]">
           <h1 className="font-[500] text-sm uppercase mb-5 px-3 text-[#8D8D8D]">

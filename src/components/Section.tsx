@@ -56,13 +56,13 @@ const midContent = {
 function Section({ title, desc, img, buttonText, midSection, link }: Props) {
   return (
     <div
-      className={`h-[90vh] w-[90vw] lg:h-[100vh]  md:w-[80vw] mx-auto flex flex-col items-center ${
+      className={`h-[840px] md:h-[960px] w-[90vw] lg:h-[600px]  md:w-[80vw] mx-auto flex flex-col items-center ${
         midSection ? "lg:flex-row-reverse" : "lg:flex-row"
       }  overflow-hidden`}
     >
       <div className="flex-[1] flex items-center justify-center">
         <motion.div
-          className="flex flex-col items-center lg:items-start w-[100%] lg:w-[30vw] gap-6"
+          className="flex flex-col items-center lg:items-start w-[100%] lg:w-[35vw] gap-6"
           variants={midSection ? midContent : content}
           initial="initial"
           whileInView="whileInView"
@@ -85,7 +85,7 @@ function Section({ title, desc, img, buttonText, midSection, link }: Props) {
       </div>
       <div className="flex-[1] flex items-center justify-center">
         <motion.div
-          className="relative h-[100%] w-[90vw] md:h-[50vh] md:w-[80vw] lg:h-[80vh] lg:w-[37.5vw]"
+          className="relative h-[100%] w-[90vw] md:h-[50vh] md:w-[80vw] lg:h-[480px] lg:w-[37.5vw]"
           variants={midSection ? midImg : Img}
           initial="initial"
           whileInView="whileInView"

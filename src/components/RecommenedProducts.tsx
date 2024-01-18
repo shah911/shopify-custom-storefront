@@ -60,41 +60,23 @@ function RecommenedProducts({ title, products }: RecommenedProductsProps) {
   }, []);
 
   return (
-    <div className="h-[60vh] md:h-[50vh] w-[75vw] mx-auto lg:h-[100vh] flex flex-col items-center justify-evenly  relative">
+    <div className="h-[600px] w-[90vw] md:w-[75vw] mx-auto  flex flex-col items-center justify-evenly  relative">
       <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
         {title}
       </h1>
-      <div className="w-[125%] lg:w-[100%] flex items-center justify-between absolute top-1/2">
-        <button
-          onClick={() => scrollSlider(-1)}
-          className={`bg-[#f2f2f2] border-none p-3 flex items-center justify-center btn-secondary cursor-pointer ${
-            isAtStart && "opacity-0 cursor-default"
-          }`}
-        >
-          <ArrowBackIosNewOutlined className="text-lg" />
-        </button>
-        <button
-          onClick={() => scrollSlider(1)}
-          className={`bg-[#f2f2f2] border-none p-3 flex items-center justify-center btn-secondary cursor-pointer ${
-            isAtEnd && "opacity-0 cursor-default"
-          }`}
-        >
-          <ArrowForwardIosOutlined className="text-lg" />
-        </button>
-      </div>
       <div
         ref={sliderRef}
         onScroll={handleScroll}
-        className="h-[30vh] lg:h-[60vh] w-[100%] flex overflow-x-scroll scrollbar-hide snap-scroll"
+        className="h-[360px] w-[100%] flex overflow-x-scroll scrollbar-hide snap-scroll"
       >
         {products.map((item: ProductNode) => (
           <div
             key={item.handle}
-            className="flex flex-col items-center justify-evenly snap-start relative"
+            className="flex flex-col items-center justify-evenly snap-start"
           >
             <Link
               href={`/yourwatch/${item.handle}`}
-              className="h-[25vh] w-[37.5vw] md:w-[25vw] lg:h-[45vh] relative"
+              className="h-[250px] w-[45vw] md:w-[25vw] lg:h-[270px] relative"
             >
               <Image
                 src={item.images.edges[0].node.url}
@@ -109,12 +91,28 @@ function RecommenedProducts({ title, products }: RecommenedProductsProps) {
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-center gap-4 w-[75vw]">
+      <div className="flex items-center justify-center gap-4 w-[90vw]">
         <div className="h-[5px] w-[90%] bg-[#f2f2f2] relative">
           <div
             className="h-[5px] w-[25%] bg-[#c40d2e] absolute top-0 left-0"
             ref={progressBarRef}
           ></div>
+        </div>
+        <div className="flex items-center justify-center gap-[3px]">
+          <button
+            onClick={() => scrollSlider(-1)}
+            className="bg-[#f2f2f2] border-none p-3 flex items-center justify-center btn-secondary cursor-pointer"
+            disabled={isAtStart}
+          >
+            <ArrowBackIosNewOutlined className="text-lg" />
+          </button>
+          <button
+            onClick={() => scrollSlider(1)}
+            className="bg-[#f2f2f2] border-none p-3 flex items-center justify-center btn-secondary cursor-pointer"
+            disabled={isAtEnd}
+          >
+            <ArrowForwardIosOutlined className="text-lg" />
+          </button>
         </div>
       </div>
     </div>

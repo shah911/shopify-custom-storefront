@@ -16,7 +16,7 @@ import {
 
 function Footer() {
   return (
-    <div className="lg:h-[100vh] flex flex-col">
+    <div className="lg:h-[600px] flex flex-col">
       <div className="flex-[5] p-10 hidden lg:flex">
         <div className="flex-[1]">
           <h2 className="uppercase text-sm font-[500]">THE COLLECTION</h2>
@@ -93,7 +93,7 @@ function Footer() {
               ))}
             </ul>
           </div>
-          <button className="btn-secondary px-[32px] py-[10px] font-[500] border border-solid border-gray-400">
+          <button className="btn-secondary px-[32px] py-[10px] font-[500] border border-solid border-gray-400 w-fit">
             contact us
           </button>
         </div>

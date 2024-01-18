@@ -10,9 +10,9 @@ const socialLinks = [
 
 function NewsLetter() {
   return (
-    <div className="flex flex-col lg:flex-row h-[35vh] md:h-[30vh] lg:bg-[#fbfbfb] border-b-[1.5px] border-[#f2f2f2]">
+    <div className="flex flex-col lg:flex-row h-[250px] lg:h-[200px] lg:bg-[#fbfbfb] border-b-[1.5px] border-[#f2f2f2]">
       <div className="flex-[1] flex flex-col justify-evenly bg-[#fbfbfb]">
-        <div className="h-[55%] md:h-[60%] lg:h-[55%] w-[80%] mx-auto flex flex-col items-center lg:items-start justify-between">
+        <div className="h-[55%]  w-[80%] mx-auto flex flex-col items-center justify-center gap-4 lg:items-start">
           <span className="uppercase text-xs lg:text-sm font-[400] text-left">
             SUBSCRIBE TO OUR NEWSLETTER
           </span>

@@ -57,17 +57,18 @@ function SignInForm() {
       );
       router.push("/");
       setLoading(false);
+    } else if (errors) {
+      setErrorMsg(errors ? errors[0].message : "Invalid login or password.");
+      setLoading(false);
     } else {
-      setErrorMsg(() =>
-        errors ? errors[0].message : "Invalid login or password."
-      );
+      setErrorMsg("something went wrong while login. Please try again later.");
       setLoading(false);
     }
     //console.log(data);
   };
 
   return (
-    <div className="h-[80vh] md:h-[50vh] lg:h-[100vh]">
+    <div className="h-[900px] md:h-[500px] lg:h-[600px]">
       <div
         className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] ${
           loading ? "opacity-[1] z-10" : "opacity-0 z-[-10]"
@@ -75,10 +76,10 @@ function SignInForm() {
       >
         <Loader />
       </div>
-      <h1 className="pt-5 pb-10 lg:pt-10 lg:pb-20 uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
+      <h1 className="py-10 lg:py-20 uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
         my account
       </h1>
-      <div className="m-auto flex flex-col md:flex-row justify-between gap-10 h-[80%] md:h-[55%] w-[90%]">
+      <div className="m-auto flex flex-col md:flex-row justify-between gap-10 h-[80%] md:h-[60%] w-[90%]">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex-[1] flex flex-col justify-between"

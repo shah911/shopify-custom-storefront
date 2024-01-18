@@ -71,7 +71,7 @@ function User() {
       >
         <Loader />
       </div>
-      <div className="h-[35vh] md:h-[30vh] lg:h-[52.5vh] w-[100%] relative">
+      <div className="h-[350px] md:h-[350px] lg:h-[400px] w-[100%] relative">
         <Image
           src="/MyOmega-ImgTetiere-large_1.jpg"
           alt=""

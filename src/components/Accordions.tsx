@@ -51,7 +51,7 @@ function Accordions({ data }: { data: DataProp }) {
               </span>
             )}
           </div>
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {index === activeIndex && (
               <motion.div
                 className=""

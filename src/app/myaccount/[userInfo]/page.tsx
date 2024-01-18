@@ -16,9 +16,7 @@ function userInfo({ params }: params) {
     <>
       <User />
       {userInfo === "info-edit" ? (
-        <div className="h-[60vh] md:h-[50vh] lg:h-[100vh] flex items-center justify-center">
-          <UserUpdate />
-        </div>
+        <UserUpdate />
       ) : (
         <div className="pt-10">
           <UserAddress />

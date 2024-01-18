@@ -5,6 +5,8 @@ import { CloseOutlined } from "@mui/icons-material";
 import { storeFront } from "../../../utils";
 import { print } from "graphql";
 import { useState } from "react";
+import Loader from "@/components/Loader";
+import { AnimatePresence, motion } from "framer-motion";
 type FormData = {
   email: string;
 };
@@ -35,6 +37,22 @@ const customerPasswordReset = gql`
     }
   }
 `;
+const animate = {
+  initial: {
+    opacity: 0,
+    height: 0,
+  },
+  animate: {
+    height: "auto",
+    opacity: 1,
+    transition: { duration: 0.3 },
+  },
+  exit: {
+    opacity: 0,
+    height: 0,
+    transition: { duration: 0.3 },
+  },
+};
 
 function forgotPassword() {
   const {
@@ -45,61 +63,79 @@ function forgotPassword() {
 
   const [customerEmail, setCustomerEmail] = useState<undefined | string>();
   const [notify, setNotify] = useState(false);
-  const [errMsg, setErrMsg] = useState();
-  console.log(errMsg);
+  const [errMsg, setErrMsg] = useState<undefined | string>();
+  const [loading, setLoading] = useState(false);
+  //console.log(errMsg);
 
   const onSubmit = async (formData: FormData) => {
     //console.log(formData);
     const { email } = formData;
+    setLoading(true);
     const { data, errors } = await storeFront(print(customerRecovery), {
       email: email,
     });
     if (errors) {
-      setErrMsg(errors[0].message);
+      setErrMsg(
+        errors[0].message ||
+          data?.customerRecover?.customerUserErrors[0]?.message
+      );
       setNotify(true);
-    } else {
+    } else if (data?.customerRecover) {
       setCustomerEmail(email);
       setNotify(true);
+    } else {
+      setNotify(true);
+      setErrMsg("Something went wrong. Please try again later.");
     }
-    //console.log(data);
-    //console.log(errors);
+    setLoading(false);
+    // console.log(data);
+    // console.log(errors);
   };
 
   return (
     <>
-      {notify && (
-        <div className="h-[100px] w-[100%] bg-[#c40d2e] flex items-center justify-evenly">
-          {errMsg ? (
-            <p className="text-white text-xs text-center md:text-sm w-[75%]">
-              {errMsg}
-            </p>
-          ) : (
-            <p className="text-white text-xs text-center md:text-sm w-[75%]">
-              If there is an account associated with {customerEmail} you will
-              receive an email with a link to reset your password.
-            </p>
-          )}
-          <span className="text-white">
-            <CloseOutlined
-              className="cursor-pointer"
-              onClick={() => setNotify(false)}
-            />
-          </span>
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {notify && (
+          <motion.div
+            variants={animate}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <div className="h-[100px] w-[100%] bg-[#c40d2e] flex items-center justify-evenly">
+              {errMsg ? (
+                <p className="text-white text-xs text-center md:text-sm w-[75%]">
+                  {errMsg}
+                </p>
+              ) : (
+                <p className="text-white text-xs text-center md:text-sm w-[75%]">
+                  If there is an account associated with {customerEmail} you
+                  will receive an email with a link to reset your password.
+                </p>
+              )}
+              <span className="text-white">
+                <CloseOutlined
+                  className="cursor-pointer"
+                  onClick={() => setNotify(false)}
+                />
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <form
-        className="lg:h-[calc(100vh-104px)] md:h-[50vh] h-[50vh] flex flex-col items-center justify-center"
+        className="h-[500px] flex flex-col items-center justify-center"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="h-[70%] w-[90%] md:h-[60%] md:w-[80%] flex flex-col items-center justify-between">
-          <h1 className="text-[#c40d2e] text-[28px] text-center md:text-[38px] font-[300] tracking-[5px]">
+        <div className="h-[70%] md:h-[60%] w-[90%] lg:h-[50%] md:w-[80%] flex flex-col items-center justify-between">
+          <h1 className="text-[#c40d2e] text-[30px] text-center md:text-[38px] font-[300] tracking-[5px]">
             FORGOT YOUR PASSWORD?
           </h1>
           <span className="text-sm font-[300] text-center text-[#555555]">
             Please enter your email address below to receive a password reset
             link.
           </span>
-          <div className="input-group2">
+          <div className="input-group2 flex flex-col">
             <input
               {...register("email", {
                 required: "Email is required",
@@ -120,9 +156,16 @@ function forgotPassword() {
           </div>
           <button
             type="submit"
-            className="btn-secondary border border-gray-400 w-[90vw] lg:w-[40vw] md:w-[60vw] py-3"
+            disabled={notify}
+            className="disabled:opacity-50 btn-secondary border border-gray-400 w-[90vw] lg:w-[40vw] md:w-[60vw] py-3"
           >
-            RESET MY PASSWORD
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <Loader />
+              </div>
+            ) : (
+              "RESET MY PASSWORD"
+            )}
           </button>
         </div>
       </form>

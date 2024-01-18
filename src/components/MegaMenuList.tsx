@@ -19,7 +19,6 @@ function MegaMenuList({ tab, MegaMenuLinks }: Props) {
     <AnimatePresence mode="wait">
       {tab === "find your watch" ? (
         <motion.div
-          className="h-[calc(100vh-100.5px)]"
           variants={listItem}
           initial="initial"
           animate="animate"
@@ -30,7 +29,7 @@ function MegaMenuList({ tab, MegaMenuLinks }: Props) {
         </motion.div>
       ) : (
         <motion.div
-          className="h-[70vh] flex flex-col items-center justify-evenly py-10 shadow-md bg-white"
+          className="h-[420px] flex flex-col items-center justify-evenly py-10 shadow-md bg-white"
           variants={listItem}
           initial="initial"
           animate="animate"
