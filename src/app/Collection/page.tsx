@@ -182,7 +182,7 @@ function ProductCollection() {
     <div className="flex flex-col items-center justify-center">
       <div
         className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] ${
-          loading ? "opacity-[1] z-10" : "opacity-0 z-[-10]"
+          loading ? "opacity-[1] z-30" : "opacity-0 z-[-10]"
         }`}
       >
         <Loader />

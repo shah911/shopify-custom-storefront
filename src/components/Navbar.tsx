@@ -1,15 +1,36 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import MegaMenu from "./MegaMenu";
 import MenuIcon from "./MenuIcon";
-import { Badge } from "@mui/material";
-import { ShoppingBagOutlined } from "@mui/icons-material";
 import Search from "./Search";
 import Cart from "./Cart";
+import { useState } from "react";
+import { useMotionValueEvent, useScroll, motion } from "framer-motion";
 
 function Navbar() {
+  const [hidden, setHidden] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious();
+    if (latest > previous && latest > 150) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+  });
+
   return (
-    <div className="h-[60px] lg:h-[104px] flex items-center justify-evenly shadow-sm">
+    <motion.div
+      className="sticky top-0 z-10 bg-white h-[60px] lg:h-[104px] flex items-center justify-evenly shadow-sm"
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" },
+      }}
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+    >
       <div className="h-[100%] w-[90vw] lg:w-[95vw] mx-auto flex flex-col">
         <div className="flex-[1] flex items-center">
           <div className="flex-[1]">
@@ -41,7 +62,7 @@ function Navbar() {
           <MegaMenu />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

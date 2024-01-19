@@ -101,14 +101,14 @@ function RecommenedProducts({ title, products }: RecommenedProductsProps) {
         <div className="flex items-center justify-center gap-[3px]">
           <button
             onClick={() => scrollSlider(-1)}
-            className="bg-[#f2f2f2] border-none p-3 flex items-center justify-center btn-secondary cursor-pointer"
+            className="bg-[#f2f2f2] border-none p-2 lg:p-3 flex items-center justify-center btn-secondary cursor-pointer"
             disabled={isAtStart}
           >
             <ArrowBackIosNewOutlined className="text-lg" />
           </button>
           <button
             onClick={() => scrollSlider(1)}
-            className="bg-[#f2f2f2] border-none p-3 flex items-center justify-center btn-secondary cursor-pointer"
+            className="bg-[#f2f2f2] border-none p-2 lg:p-3 flex items-center justify-center btn-secondary cursor-pointer"
             disabled={isAtEnd}
           >
             <ArrowForwardIosOutlined className="text-lg" />
