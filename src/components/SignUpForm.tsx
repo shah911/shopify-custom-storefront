@@ -72,28 +72,43 @@ function SignUpForm() {
     const userErrorMessage =
       data?.customerCreate?.customerUserErrors[0]?.message;
 
-    if (data?.customerCreate?.customer?.id) {
-      const res = await storeFront(print(CustomerAccessToken), {
+    if (userErrorMessage) {
+      setErrorMsg(userErrorMessage);
+    } else if (data?.customerCreate?.customer?.id) {
+      const { data, errors } = await storeFront(print(CustomerAccessToken), {
         input: {
           email: email,
           password: password,
         },
       });
-      window.localStorage.setItem(
-        "customer-access-token",
-        JSON.stringify(res.data.customerAccessTokenCreate.customerAccessToken)
-      );
-      //console.log(res.data.customerAccessTokenCreate.customerAccessToken);
-      router.push("/");
+      if (data) {
+        window.localStorage.setItem(
+          "customer-access-token",
+          JSON.stringify(data.customerAccessTokenCreate.customerAccessToken)
+        );
+        //console.log(res.data.customerAccessTokenCreate.customerAccessToken);
+        router.push("/");
+      } else if (errors) {
+        setErrorMsg(
+          errors[0].message
+            ? errors[0].message
+            : "something went wrong while sign up. Please try again later."
+        );
+      }
     } else if (errors) {
-      setErrorMsg(() => (errors ? errors[0].message : userErrorMessage));
+      setErrorMsg(
+        errors[0].message
+          ? errors[0].message
+          : "something went wrong while sign up. Please try again later."
+      );
     } else {
       setErrorMsg(
-        "something went wrong while sign up. Please trt again later."
+        "something went wrong while sign up. Please try again later."
       );
     }
     setLoading(false);
-    //console.log(data);
+    // console.log(data);
+    // console.log(errors);
   };
 
   return (
@@ -105,13 +120,12 @@ function SignUpForm() {
       >
         <Loader />
       </div>
-      <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
+      <h1 className="uppercase mb-8 text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
         sign up
       </h1>
-
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="h-[75%] w-[90%] lg:w-[80%] mx-auto flex flex-col justify-evenly"
+        className="h-[75%] w-[90%] lg:w-[75%] 2xl:w-[60%] 4xl:w-[45%] mx-auto flex flex-col justify-evenly"
       >
         <div className="input-group2 flex flex-col">
           <input

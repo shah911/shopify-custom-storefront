@@ -145,7 +145,7 @@ function forgotPassword() {
                 },
               })}
               type="email"
-              className="input2 w-[90vw] lg:w-[40vw] md:w-[60vw] border border-gray-400 bg-[#fbfbfb]"
+              className="input2 w-[90vw] lg:w-[40vw] md:w-[60vw] 2xl:w-[30vw] border border-gray-400 bg-[#fbfbfb]"
             />
             <label className="user-label2">Email</label>
             {errors.email && (
@@ -157,7 +157,7 @@ function forgotPassword() {
           <button
             type="submit"
             disabled={notify}
-            className="disabled:opacity-50 btn-secondary border border-gray-400 w-[90vw] lg:w-[40vw] md:w-[60vw] py-3"
+            className="disabled:opacity-50 btn-secondary border border-gray-400 w-[90vw] lg:w-[40vw] 2xl:w-[30vw] md:w-[60vw] py-3"
           >
             {loading ? (
               <div className="flex items-center justify-center">

@@ -170,7 +170,7 @@ function AddressForm() {
             {...register("streetAddress", {
               required: "Street address is required",
             })}
-            className="input2 w-[90vw] md:w-[70vw] border bg-[#fbfbfb] border-gray-400"
+            className="input2 w-[90vw] md:w-[70vw] 2xl:w-[50vw] border bg-[#fbfbfb] border-gray-400"
           />
           <label className="user-label2">Street address*</label>
           {errors.streetAddress && (
@@ -184,7 +184,7 @@ function AddressForm() {
             {...register("homeAddress", {
               required: "Home address is required",
             })}
-            className="input2 w-[90vw] md:w-[70vw] border bg-[#fbfbfb] border-gray-400"
+            className="input2 w-[90vw] md:w-[70vw] 2xl:w-[50vw] border bg-[#fbfbfb] border-gray-400"
           />
           <label className="user-label2">Home address*</label>
           {errors.homeAddress && (
@@ -196,7 +196,7 @@ function AddressForm() {
         <div className="input-group2 flex flex-col">
           <input
             {...register("city", { required: "city is required" })}
-            className="input2 w-[90vw] md:w-[70vw] border bg-[#fbfbfb] border-gray-400"
+            className="input2 w-[90vw] md:w-[70vw] 2xl:w-[50vw] border bg-[#fbfbfb] border-gray-400"
           />
           <label className="user-label2">City*</label>
           {errors.city && (
@@ -210,7 +210,7 @@ function AddressForm() {
             {...register("country", { required: "Country is required" })}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            className={`input2 w-[90vw] md:w-[70vw] border bg-[#fbfbfb] border-gray-400 ${
+            className={`input2 w-[90vw] md:w-[70vw] 2xl:w-[50vw] border bg-[#fbfbfb] border-gray-400 ${
               value && "has-value"
             }`}
           >
@@ -238,7 +238,7 @@ function AddressForm() {
                 message: "zip code shouldn't be greater than 5 digits",
               },
             })}
-            className="input2 w-[90vw] md:w-[70vw] border bg-[#fbfbfb] border-gray-400"
+            className="input2 w-[90vw] md:w-[70vw] 2xl:w-[50vw] border bg-[#fbfbfb] border-gray-400"
           />
           <label className="user-label2">Zip*</label>
           {errors.zip && (

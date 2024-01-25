@@ -118,7 +118,7 @@ function UserUpdate() {
               },
             })}
             type="email"
-            className="input2 w-[90vw] md:w-[70vw] border bg-[#fbfbfb] border-gray-400"
+            className="input2 w-[90vw] md:w-[70vw] 2xl:w-[30vw] border bg-[#fbfbfb] border-gray-400"
           />
           <label className="user-label2">Change Email*</label>
           {errors.email && (
@@ -141,7 +141,7 @@ function UserUpdate() {
               },
             })}
             type="text"
-            className="input2 w-[90vw] md:w-[70vw] border bg-[#fbfbfb] border-gray-400"
+            className="input2 w-[90vw] md:w-[70vw] 2xl:w-[30vw] border bg-[#fbfbfb] border-gray-400"
           />
           <label className="user-label2">Change Username*</label>
           {errors.username && (

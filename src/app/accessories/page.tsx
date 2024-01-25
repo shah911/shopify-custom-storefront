@@ -106,7 +106,7 @@ function ProductCollection() {
     setLoading(true);
     const { data, errors } = await storeFront(print(productQuery), {
       tag: `tag:${!selectedOption ? "accessories" : selectedOption}`,
-      cursor: null, // Assuming null or some initial value for the initial load
+      cursor: null,
       sortKeyValue: productSort,
       sortOrder: !productSort ? false : true,
     });
@@ -182,7 +182,7 @@ function ProductCollection() {
     <div className="flex flex-col items-center justify-center">
       <div
         className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] ${
-          loading ? "opacity-[1] z-30" : "opacity-0 z-[-10]"
+          loading ? "opacity-[1] z-30 lg:z-[1]" : "opacity-0 z-[-1]"
         }`}
       >
         <Loader />
@@ -236,8 +236,8 @@ function ProductCollection() {
             />
           </div>
         </div>
-        <div className="flex-[3] flex flex-col min-h-[100vh]">
-          <div className="flex  flex-wrap items-center justify-center">
+        <div className="flex-[3] flex flex-col">
+          <div className=" min-h-[100vh] flex flex-wrap items-center justify-center">
             {ProductsList?.map((item, i) => (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -255,7 +255,7 @@ function ProductCollection() {
               <Loader />
             </div>
           ) : (
-            <div ref={loadMoreRef}></div>
+            <div className="py-8" ref={loadMoreRef}></div>
           )}
         </div>
       </div>

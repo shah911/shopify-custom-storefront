@@ -163,17 +163,21 @@ function Cart() {
       cartId: cartId,
       cartLineId: id,
     });
-    if (errors) {
-      setErr(true);
-      setErrMsg("something went wrong while removing this cart item");
-      setRemovingItem(false);
-    } else {
+    if (data) {
       const newCart = data?.cartLinesRemove?.cart;
       window.localStorage.setItem(
         "shopify-demo-store-cart",
         JSON.stringify(newCart)
       );
       setCart(newCart);
+      setRemovingItem(false);
+    } else if (errors) {
+      setErr(true);
+      setErrMsg("something went wrong while removing this cart item");
+      setRemovingItem(false);
+    } else {
+      setErr(true);
+      setErrMsg("something went wrong while removing this cart item");
       setRemovingItem(false);
     }
   };
@@ -183,7 +187,7 @@ function Cart() {
       <Loader />
     </div>
   ) : (
-    <div>
+    <div className="flex items-center justify-center">
       <div
         className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] 
          ${removingItem ? "opacity-[1] z-10" : "opacity-0 z-[-10]"}
@@ -194,7 +198,7 @@ function Cart() {
       <AnimatePresence mode="wait">
         {err && (
           <motion.div
-            className="absolute flex items-center justify-center gap-2 top-[20%] left-[35%] bg-black h-auto w-auto py-1 px-2 rounded-xl z-10"
+            className="absolute flex items-center justify-center gap-2 top-[20%] bg-black py-1 px-2 rounded-xl z-10"
             initial={{ y: 0, opacity: 0 }}
             animate={{ y: "100%", opacity: 1, transition: { type: "tween" } }}
             exit={{ y: 0, opacity: 0, transition: { type: "tween" } }}
@@ -227,10 +231,10 @@ function Cart() {
               {cart?.lines.edges?.map((item, i: number) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between h-[25vh] lg:h-[45vh] lg:w-[75%] w-[100%] my-10"
+                  className="flex items-center justify-between h-[220px] lg:w-[75%] 2xl:w-[80%] 2xl:h-[300px] w-[100%] my-10"
                 >
                   {/* ProductImg */}
-                  <div className="relative h-[100%] flex-[1.2] bg-[#f2f2f2]">
+                  <div className="relative h-[100%] flex-[1.2] 2xl:flex-[1] bg-[#f2f2f2]">
                     <Image
                       src={
                         item.node.merchandise.product.images.edges[0].node.url

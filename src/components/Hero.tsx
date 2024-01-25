@@ -98,7 +98,7 @@ function Hero() {
           (item, i) =>
             i === activeIndex && (
               <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[600px] overflow-hidden">
+                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[800px] 4xl:h-[900px] overflow-hidden">
                   <motion.div
                     className="relative h-[100%] w-[100%]"
                     variants={mainImg}
@@ -115,9 +115,9 @@ function Hero() {
                     />
                   </motion.div>
                 </div>
-                <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[180px] md:w-[50vw] md:h-[450px] lg:h-[600px] gap-5">
+                <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[180px] md:w-[50vw] md:h-[450px] lg:h-[700px] 2xl:h-[800px] 4xl:h-[900px] gap-5">
                   <motion.div
-                    className="lg:w-[75vw] h-[100%] flex flex-col items-center justify-center gap-5"
+                    className="lg:h-[100%] flex flex-col items-center justify-center gap-5"
                     variants={desc}
                     initial="initial"
                     animate="animate"
@@ -126,8 +126,8 @@ function Hero() {
                     <div
                       className={`relative ${
                         i === 1
-                          ? "w-[20vw] h-[25vh] lg:h-[360px] hidden md:flex"
-                          : "w-[25vw] h-[12.5vh] lg:h-[180px] hidden md:flex"
+                          ? "md:w-[25vw] lg:w-[20vw] h-[250px] lg:h-[360px] 2xl:h-[400px] 2xl:w-[15vw] hidden md:flex"
+                          : "md:w-[30vw] lg:w-[25vw] h-[125px] lg:h-[200px] 2xl:h-[250px] hidden md:flex"
                       }`}
                     >
                       <Image
@@ -139,23 +139,23 @@ function Hero() {
                       />
                     </div>
                     <div className="flex flex-col items-center">
-                      <span className="uppercase font-[300] text-[26px] md:text-[28px]">
+                      <span className="uppercase font-[300] text-[26px] md:text-[20px] lg:text-[28px]">
                         {item.title}
                       </span>
-                      <span className="uppercase font-light text-[15px] md:text-[16px] tracking-[2px]">
+                      <span className="uppercase font-light text-[15px] md:text-[10px] lg:text-[16px] tracking-[2px]">
                         {item.subtitle}
                       </span>
                     </div>
-                    <span className="btn mt-1">
+                    <button className="btn mt-1">
                       <Link href={item.link}>{item.buttonText}</Link>
-                    </span>
+                    </button>
                   </motion.div>
                 </div>
               </div>
             )
         )}
       </AnimatePresence>
-      <div className="flex items-center justify-center gap-4 absolute top-[715px] md:top-[475px] lg:top-[650px] left-0 right-0">
+      <div className="flex items-center justify-center gap-4 absolute top-[715px] md:top-[475px] lg:top-[750px] 2xl:top-[850px] 4xl:top-[950px] left-0 right-0">
         <div className="cursor-pointer" onClick={() => setPlay(!play)}>
           {play ? (
             <PauseOutlined className="text-[#555555]" />

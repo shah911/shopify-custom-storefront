@@ -241,6 +241,12 @@ input:valid ~ label {
   text-align: justify;
 }
 
+@media (min-width: 1920px) {
+  .desc p {
+    font-size: 16px;
+  }
+}
+
 .container {
   cursor: pointer;
 }

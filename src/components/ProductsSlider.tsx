@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import Loader from "./Loader";
 import ErrPage from "./ErrPage";
-import { AnimatePresence, motion } from "framer-motion";
 
 type ImageNode = {
   node: {
@@ -127,16 +126,16 @@ function ProductsSlider({ title, ProductsList }: Props) {
   return !ProductsList ? (
     <ErrPage />
   ) : (
-    <div className="h-[840px] flex flex-col items-center justify-evenly">
-      <div className="flex flex-col items-center justify-center gap-6">
-        <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
+    <div className="h-[840px] 2xl:h-[960px] flex flex-col items-center justify-evenly">
+      <div className="flex flex-col items-center justify-center gap-6 2xl:gap-12">
+        <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] 2xl:text-[52px] font-[300] tracking-[3px]">
           {title}
         </h1>
         {loading ? (
           <Loader />
         ) : (
           <div className="flex flex-col items-center gap-4">
-            <p className="text-sm text-center text-[#555555] font-[300] mx-auto w-[90%]">
+            <p className="text-sm 2xl:text-base text-center text-[#555555] font-[300] mx-auto w-[90%]">
               {show
                 ? `${ProductsList?.edges[0].node.description.substring(
                     0,
@@ -165,7 +164,7 @@ function ProductsSlider({ title, ProductsList }: Props) {
           >
             <Link
               href={`/yourwatch/${item.node.handle}`}
-              className="p-4 h-[350px] lg:h-[270px] w-[50vw] md:w-[33.33vw] lg:w-[25vw] 2xl:w-[20vw] relative"
+              className="p-4 h-[350px] lg:h-[270px] w-[50vw] md:w-[33.33vw] lg:w-[25vw] relative"
             >
               <Image
                 src={item.node.images.edges[0]?.node?.url}
@@ -174,7 +173,7 @@ function ProductsSlider({ title, ProductsList }: Props) {
                 className="object-contain"
               />
             </Link>
-            <span className="w-[80%] text-center uppercase font-[300] text-xs">
+            <span className="w-[80%] text-center uppercase font-[300] text-xs 2xl:text-sm">
               {item.node.title}
             </span>
           </div>

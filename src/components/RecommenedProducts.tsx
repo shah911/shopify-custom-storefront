@@ -60,8 +60,8 @@ function RecommenedProducts({ title, products }: RecommenedProductsProps) {
   }, []);
 
   return (
-    <div className="h-[600px] w-[90vw] md:w-[75vw] mx-auto  flex flex-col items-center justify-evenly  relative">
-      <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
+    <div className="h-[600px] w-[90vw] md:w-[75vw] 2xl:h-[768px] mx-auto  flex flex-col items-center justify-evenly  relative">
+      <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] 4xl:text-5xl font-[300] tracking-[3px]">
         {title}
       </h1>
       <div
@@ -85,7 +85,7 @@ function RecommenedProducts({ title, products }: RecommenedProductsProps) {
                 className="object-contain"
               />
             </Link>
-            <span className="w-[90%] text-center uppercase font-[300] text-xs">
+            <span className="w-[90%] text-center uppercase font-[300] text-xs 4xl:text-sm">
               {item.title}
             </span>
           </div>

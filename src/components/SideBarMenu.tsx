@@ -41,7 +41,7 @@ function SideBarMenu() {
 
   return (
     <motion.div
-      className="h-[100%] w-[100vw] lg:w-[30vw] z-30 bg-white"
+      className="h-[100%] w-[100vw] lg:w-[30vw] 2xl:w-[25vw] 4xl:w-[20vw] z-30 bg-white"
       variants={menu}
       initial="initial"
       animate="animate"

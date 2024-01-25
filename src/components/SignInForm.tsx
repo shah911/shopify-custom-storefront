@@ -50,7 +50,14 @@ function SignInForm() {
     });
     // console.log(data);
     // console.log(errors);
-    if (data?.customerAccessTokenCreate?.customerAccessToken) {
+    if (data?.customerAccessTokenCreate?.customerUserErrors.length !== 0) {
+      setErrorMsg(
+        data?.customerAccessTokenCreate?.customerUserErrors[0].message
+          ? "Invalid login or password."
+          : "something went wrong while login. Please try again later."
+      );
+      setLoading(false);
+    } else if (data?.customerAccessTokenCreate?.customerAccessToken) {
       window.localStorage.setItem(
         "customer-access-token",
         JSON.stringify(data.customerAccessTokenCreate.customerAccessToken)
@@ -58,10 +65,10 @@ function SignInForm() {
       router.push("/");
       setLoading(false);
     } else if (errors) {
-      setErrorMsg(errors ? errors[0].message : "Invalid login or password.");
-      setLoading(false);
-    } else {
-      setErrorMsg("something went wrong while login. Please try again later.");
+      setErrorMsg(
+        errors[0].message &&
+          "something went wrong while login. Please try again later."
+      );
       setLoading(false);
     }
     //console.log(data);
@@ -79,7 +86,7 @@ function SignInForm() {
       <h1 className="py-10 lg:py-20 uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
         my account
       </h1>
-      <div className="m-auto flex flex-col md:flex-row justify-between gap-10 h-[80%] md:h-[60%] w-[90%]">
+      <div className="m-auto flex flex-col md:flex-row justify-between gap-10 h-[80%] w-[90%] md:h-[60%] 2xl:h-[50%] 2xl:w-[70%] 4xl:w-[55%]">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex-[1] flex flex-col justify-between"

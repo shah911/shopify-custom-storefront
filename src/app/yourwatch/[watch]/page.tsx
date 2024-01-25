@@ -297,7 +297,7 @@ function YourWatch({ params }: YourWatchProps) {
           setErr(true);
           setErrMsg("something went wrong while creating a cart instance");
         }
-        localCartData = data.cartCreate;
+        localCartData = data?.cartCreate;
         setCart(localCartData);
         window.localStorage.setItem(
           "shopify-demo-store",
@@ -347,11 +347,11 @@ function YourWatch({ params }: YourWatchProps) {
   ) : !ProductsList ? (
     <ErrPage />
   ) : (
-    <div className="flex flex-col relative">
+    <div className="flex flex-col items-center overflow-hidden relative">
       <AnimatePresence mode="wait">
         {err && (
           <motion.div
-            className="absolute flex items-center justify-center gap-2 top-[5%] left-[3.5%] md:left-[25%] lg:left-[35%] bg-black h-auto w-auto py-1 px-2 rounded-xl z-10"
+            className="absolute flex items-center justify-center gap-2 top-[5%] bg-black py-1 px-2 rounded-xl z-10"
             variants={msg}
             initial="initial"
             animate="animate"
@@ -367,14 +367,14 @@ function YourWatch({ params }: YourWatchProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="lg:h-[600px] h-[768px] flex lg:flex-row flex-col items-center justify-center bg-[#f2f2f2]">
+      <div className="h-[768px] lg:h-[600px] 2xl:h-[700px] 4xl:h-[800px] flex lg:flex-row flex-col items-center justify-center bg-[#f2f2f2]">
         <div className="flex flex-[1] h-[100%] w-[100vw] lg:w-[50vw]">
           {singleProduct?.images.edges.length! > 1 && (
             <div className="flex-[1.2] md:flex-[1.5] flex flex-col items-center justify-center gap-5">
               {singleProduct?.images.edges.map((img, i) => (
                 <motion.div
                   key={i}
-                  className={`relative h-16 w-14 md:h-20 md:w-20 border-[2px] transition-colors duration-300 ${
+                  className={`relative h-16 w-14 md:h-20 md:w-20 2xl:h-24 2xl:w-24 border-[2px] transition-colors duration-300 ${
                     i === selectedImg && "border-[#8888887d]"
                   }  bg-white cursor-pointer`}
                   variants={sideImgs}
@@ -493,7 +493,7 @@ function YourWatch({ params }: YourWatchProps) {
         </div>
       </div>
       <div className="w-[90vw] items-center py-10 mx-[auto]">
-        <h1 className="pb-10 uppercase text-center text-[#c40d2e] text-4xl font-[300] tracking-[5px]">
+        <h1 className="pb-10 uppercase text-center text-[#c40d2e] text-4xl 4xl:text-5xl font-[300] tracking-[5px]">
           description
         </h1>
         <div

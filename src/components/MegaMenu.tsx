@@ -97,17 +97,15 @@ function MegaMenu() {
             animate="animate"
             exit="exit"
           >
-            {
-              <div className="h-[calc(100vh-100.5px)] bg-[#00000054]">
-                <hr />
-                <div
-                  onMouseOver={() => setIsOpen(true)}
-                  onMouseOut={() => setIsOpen(false)}
-                >
-                  <MegaMenuList tab={tab} MegaMenuLinks={megaMenuLinks[tab]} />
-                </div>
+            <div className="h-[calc(100vh-100.5px)] bg-[#00000054]">
+              <hr />
+              <div
+                onMouseOver={() => setIsOpen(true)}
+                onMouseOut={() => setIsOpen(false)}
+              >
+                <MegaMenuList tab={tab} MegaMenuLinks={megaMenuLinks[tab]} />
               </div>
-            }
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
