@@ -357,7 +357,7 @@ function YourWatch({ params }: YourWatchProps) {
             animate="animate"
             exit="exit"
           >
-            <span className="text-white text-xs font-[300] capitalize">
+            <span className="text-white text-xs text-center font-[300] capitalize">
               {errMsg}
             </span>
             <CloseOutlined

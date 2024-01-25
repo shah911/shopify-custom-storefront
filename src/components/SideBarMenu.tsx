@@ -41,14 +41,14 @@ function SideBarMenu() {
 
   return (
     <motion.div
-      className="h-[100%] w-[100vw] lg:w-[30vw] 2xl:w-[25vw] 4xl:w-[20vw] z-30 bg-white"
+      className="h-[100%] w-[100vw] lg:w-[30vw] 2xl:w-[25vw] 4xl:w-[20vw] z-30 bg-white overflow-y-auto scrollbar-hide"
       variants={menu}
       initial="initial"
       animate="animate"
       exit="exit"
     >
       <div className="h-[100%] flex flex-col gap-6 p-10">
-        {sideBarData.map((section, index) => (
+        {sideBarData.map((section, index: number) => (
           <div key={index} className="flex flex-col">
             <div
               className="flex items-center justify-between cursor-pointer py-4"

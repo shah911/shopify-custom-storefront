@@ -203,7 +203,7 @@ function Cart() {
             animate={{ y: "100%", opacity: 1, transition: { type: "tween" } }}
             exit={{ y: 0, opacity: 0, transition: { type: "tween" } }}
           >
-            <span className="text-white text-xs font-[300] capitalize">
+            <span className="text-white text-xs text-center font-[300] capitalize">
               {errMsg}
             </span>
             <CloseOutlined
