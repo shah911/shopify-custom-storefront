@@ -260,6 +260,7 @@ function YourWatch({ params }: YourWatchProps) {
   const [cart, setCart] = useState();
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [err, setErr] = useState(false);
+  const [productFetchErr, setProductFetchErr] = useState(false);
   const variantId = singleProduct?.variants.edges[0].node.id;
 
   useEffect(() => {
@@ -267,7 +268,12 @@ function YourWatch({ params }: YourWatchProps) {
       const { data, errors } = await storeFront(print(singleProductQuery), {
         handle: watch,
       });
-      //console.log(errors);
+
+      if (errors) {
+        setLoading(false);
+        return setProductFetchErr(true);
+      }
+
       const id = data?.product?.id;
       const res = await storeFront(print(relatedProducts), {
         productId: id,
@@ -344,7 +350,7 @@ function YourWatch({ params }: YourWatchProps) {
     <div className="h-[100vh] flex items-center justify-center">
       <Loader />
     </div>
-  ) : !ProductsList ? (
+  ) : productFetchErr ? (
     <ErrPage />
   ) : (
     <div className="flex flex-col items-center overflow-hidden relative">

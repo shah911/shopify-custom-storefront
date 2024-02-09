@@ -101,6 +101,7 @@ function ProductCollection() {
   const [productSort, setProductSort] = useState<undefined | string>(undefined);
   const [option, setOption] = useState<undefined | number>();
   const [sort, setSort] = useState<undefined | number>();
+  const [err, setErr] = useState(false);
 
   const loadInitialData = async () => {
     setLoading(true);
@@ -110,6 +111,11 @@ function ProductCollection() {
       sortKeyValue: productSort,
       sortOrder: !productSort ? false : true,
     });
+
+    if (errors) {
+      setLoading(false);
+      return setErr(true);
+    }
 
     setProductsList(data?.products?.edges);
     setEndCursor(data?.products?.pageInfo.endCursor);
@@ -125,6 +131,11 @@ function ProductCollection() {
       sortKeyValue: productSort,
       sortOrder: !productSort ? false : true,
     });
+
+    if (errors) {
+      setMoreLoading(false);
+      return;
+    }
 
     //setProductsList((prev) => [...prev, ...data.products.edges]);
     if (data?.products?.edges) {
@@ -176,7 +187,7 @@ function ProductCollection() {
     };
   }, [endCursor, nextPage]);
 
-  return !ProductsList ? (
+  return err ? (
     <ErrPage />
   ) : (
     <div className="flex flex-col items-center justify-center">

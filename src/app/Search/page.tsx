@@ -80,6 +80,7 @@ function Search({ searchParams }: SearchProps) {
   const [moreLoading, setMoreLoading] = useState(false);
   const [nextPage, setNextPage] = useState<boolean | undefined>();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const [err, setErr] = useState(false);
 
   const loadInitialData = async () => {
     setLoading(true);
@@ -87,6 +88,11 @@ function Search({ searchParams }: SearchProps) {
       productQuery: query,
       cursor: null,
     });
+
+    if (errors) {
+      setLoading(false);
+      return setErr(true);
+    }
 
     setProducts(data?.products?.edges);
     setEndCursor(data?.products?.pageInfo.endCursor);
@@ -103,6 +109,11 @@ function Search({ searchParams }: SearchProps) {
     // if (data?.products?.edges) {
     //   setProducts((prev) => [...prev, ...data.products.edges]);
     // }
+
+    if (errors) {
+      setMoreLoading(false);
+      return;
+    }
 
     if (data?.products?.edges) {
       setProducts((prevProducts) => {
@@ -157,10 +168,10 @@ function Search({ searchParams }: SearchProps) {
     <div className="h-[100vh] flex items-center justify-center">
       <Loader />
     </div>
+  ) : err ? (
+    <ErrPage />
   ) : products?.length === 0 || !query ? (
     <NoProducts query={query} />
-  ) : !products ? (
-    <ErrPage />
   ) : (
     <div className="flex flex-col">
       <div className="flex flex-wrap items-center justify-center gap-4 py-10">
@@ -170,7 +181,7 @@ function Search({ searchParams }: SearchProps) {
             key={product.node.handle}
           >
             <motion.div
-              className="h-[60vh] md:h-[50vh] lg:h-[100vh] w-[90vw] md:w-[45vw] lg:w-[30vw]"
+              className="h-[600px] w-[90vw] md:w-[45vw] lg:w-[30vw] 2xl:h-[700px] 2xl:w-[25vw] 4xl:w-[20vw]"
               initial={{ opacity: 0 }}
               animate={{
                 opacity: 1,
