@@ -98,7 +98,7 @@ function Hero() {
           (item, i) =>
             i === activeIndex && (
               <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[800px] 4xl:h-[900px] overflow-hidden">
+                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden">
                   <motion.div
                     className="relative h-[100%] w-[100%]"
                     variants={mainImg}
@@ -115,7 +115,7 @@ function Hero() {
                     />
                   </motion.div>
                 </div>
-                <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[180px] md:w-[50vw] md:h-[450px] lg:h-[700px] 2xl:h-[800px] 4xl:h-[900px] gap-5">
+                <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[180px] md:w-[50vw] md:h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] gap-5">
                   <motion.div
                     className="lg:h-[100%] flex flex-col items-center justify-center gap-5"
                     variants={desc}
@@ -155,7 +155,7 @@ function Hero() {
             )
         )}
       </AnimatePresence>
-      <div className="flex items-center justify-center gap-4 absolute top-[715px] md:top-[475px] lg:top-[750px] 2xl:top-[850px] 4xl:top-[950px] left-0 right-0">
+      <div className="flex items-center justify-center gap-4 absolute top-[715px] md:top-[475px] lg:top-[750px] 2xl:top-[900px] 4xl:top-[1000px] left-0 right-0">
         <div className="cursor-pointer" onClick={() => setPlay(!play)}>
           {play ? (
             <PauseOutlined className="text-[#555555]" />
