@@ -14,20 +14,20 @@ const bg = {
   },
   exit: {
     opacity: 0,
-    transition: { ease: "easeInOut", duration: 0.2 },
+    transition: { ease: "easeInOut", duration: 0.2, delay: 0.5 },
   },
 };
 
 const search = {
   initial: {
-    height: 0,
+    clipPath: "inset(0 0 100% 0)",
   },
   animate: {
-    height: "auto",
+    clipPath: "inset(0)",
     transition: { ease: "easeInOut", duration: 0.3 },
   },
   exit: {
-    height: 0,
+    clipPath: "inset(0 0 100% 0)",
     transition: { ease: "easeInOut", duration: 0.3 },
   },
 };
@@ -59,7 +59,8 @@ function Search() {
 
   const ProductSearchQuery = query.toLowerCase();
 
-  const handleClick = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     router.push(`/Search?query=${ProductSearchQuery}`);
     setIsOpen(false);
   };
@@ -83,8 +84,9 @@ function Search() {
       )}
       <AnimatePresence mode="wait">
         {isOpen && (
-          <motion.div
+          <motion.form
             className="bg-[#00000054] h-[100vh] w-[100%] absolute z-30 top-[59px] lg:top-[104px] left-0"
+            onSubmit={(e) => handleSubmit(e)}
             variants={bg}
             initial="initial"
             animate="animate"
@@ -105,17 +107,18 @@ function Search() {
                   className="w-[100%] outline-none border-b-[1px] transition-colors duration-500 focus:border-black placeholder:text-2xl placeholder:text-black placeholder:font-[300]"
                 />
 
-                <Image
-                  src="/search.svg"
-                  alt="search"
-                  width={26}
-                  height={26}
-                  onClick={handleClick}
-                  className="object-contain cursor-pointer absolute right-0 top-[35%]"
-                />
+                <button type="submit">
+                  <Image
+                    src="/search.svg"
+                    alt="search"
+                    width={26}
+                    height={26}
+                    className="object-contain cursor-pointer absolute right-0 top-[35%]"
+                  />
+                </button>
               </div>
             </motion.div>
-          </motion.div>
+          </motion.form>
         )}
       </AnimatePresence>
     </div>

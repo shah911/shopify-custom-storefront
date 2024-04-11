@@ -10,8 +10,22 @@ type Props = {
 
 const listItem = {
   initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: {
+      type: "tween",
+      ease: [0.39, 0.575, 0.5649999999999999, 1],
+      duration: 0.5,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      type: "tween",
+      ease: [0.39, 0.575, 0.5649999999999999, 1],
+      duration: 0.5,
+    },
+  },
 };
 
 function MegaMenuList({ tab, MegaMenuLinks }: Props) {

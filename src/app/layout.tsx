@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NewsLetter from "@/components/NewsLetter";
 import { ScrollLockProvider } from "@/LockContext/LockContext";
+import Query from "@/components/Query";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,10 +26,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <ScrollLockProvider>
-          <Navbar />
-          {children}
-          <NewsLetter />
-          <Footer />
+          <Query>
+            <Navbar />
+            {children}
+            <NewsLetter />
+            <Footer />
+          </Query>
         </ScrollLockProvider>
       </body>
     </html>

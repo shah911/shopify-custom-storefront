@@ -27,12 +27,10 @@ const megaMenuLinks: MegaMenuLinksType = {
 
 const list = {
   initial: {
-    height: 0,
-    opacity: 0,
+    clipPath: "inset(0 0 100% 0)",
   },
   animate: {
-    height: "auto",
-    opacity: 1,
+    clipPath: "inset(0)",
     transition: {
       type: "tween",
       ease: [0.39, 0.575, 0.5649999999999999, 1],
@@ -40,8 +38,7 @@ const list = {
     },
   },
   exit: {
-    height: 0,
-    opacity: 0,
+    clipPath: "inset(0 0 100% 0)",
     transition: {
       type: "tween",
       ease: [0.39, 0.575, 0.5649999999999999, 1],
