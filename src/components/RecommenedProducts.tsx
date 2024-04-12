@@ -3,9 +3,14 @@ import {
   ArrowBackIosNewOutlined,
   ArrowForwardIosOutlined,
 } from "@mui/icons-material";
+import gql from "graphql-tag";
+import { print } from "graphql";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
+import { storeFront } from "../../utils";
+import { useQuery } from "react-query";
+import Loader from "./Loader";
 
 type ProductImage = {
   url: string;
@@ -23,10 +28,27 @@ type ProductNode = {
 
 type RecommenedProductsProps = {
   title: string;
-  products: ProductNode[];
+  productId: string;
+  //products: ProductNode[];
 };
 
-function RecommenedProducts({ title, products }: RecommenedProductsProps) {
+const RelatedProducts = gql`
+  query relatedProducts($productId: ID!) {
+    productRecommendations(productId: $productId, intent: RELATED) {
+      handle
+      title
+      images(first: 1) {
+        edges {
+          node {
+            url
+          }
+        }
+      }
+    }
+  }
+`;
+
+function RecommenedProducts({ title, productId }: RecommenedProductsProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [isAtStart, setIsAtStart] = useState(true);
@@ -59,6 +81,46 @@ function RecommenedProducts({ title, products }: RecommenedProductsProps) {
     handleScroll();
   }, []);
 
+  const fetchProducts = async () => {
+    const { data, errors } = await storeFront(print(RelatedProducts), {
+      productId: productId,
+    });
+
+    if (errors) {
+      throw new Error("Failed to fetch products");
+    }
+
+    return data;
+  };
+
+  const { data, isLoading, error } = useQuery(productId, fetchProducts, {
+    staleTime: 60000,
+  });
+
+  const products = data?.productRecommendations;
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-8">
+        <p className="text-sm font-[300]">
+          Sorry, something went wrong while fetching the recommended products.
+        </p>
+        <button
+          className="btn"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="h-[600px] w-[90vw] md:w-[75vw] 2xl:h-[768px] mx-auto  flex flex-col items-center justify-evenly  relative">
       <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] 4xl:text-5xl font-[300] tracking-[3px]">
@@ -69,7 +131,7 @@ function RecommenedProducts({ title, products }: RecommenedProductsProps) {
         onScroll={handleScroll}
         className="h-[360px] w-[100%] flex overflow-x-scroll scrollbar-hide snap-scroll"
       >
-        {products.map((item: ProductNode) => (
+        {products?.map((item: ProductNode) => (
           <div
             key={item.handle}
             className="flex flex-col items-center justify-evenly snap-start"

@@ -9,6 +9,7 @@ import Loader from "@/components/Loader";
 import { motion, AnimatePresence } from "framer-motion";
 import ErrPage from "@/components/ErrPage";
 import { CloseOutlined } from "@mui/icons-material";
+import { useQuery } from "react-query";
 
 type ImageNode = {
   url: string;
@@ -105,22 +106,6 @@ const singleProductQuery = gql`
         }
       }
       descriptionHtml
-    }
-  }
-`;
-
-const relatedProducts = gql`
-  query relatedProducts($productId: ID!) {
-    productRecommendations(productId: $productId, intent: RELATED) {
-      handle
-      title
-      images(first: 1) {
-        edges {
-          node {
-            url
-          }
-        }
-      }
     }
   }
 `;
@@ -230,62 +215,34 @@ const mainImg = {
   exit: { opacity: 0, transition: { duration: 0.3 } },
 };
 
-const price = {
-  exit: {
-    opacity: 0,
-    height: 0,
-    transition: { type: "tween", duration: 0.3 },
-  },
-};
-
-const revel = {
-  initial: { height: 0 },
-  animate: {
-    height: "auto",
-    transition: { type: "tween", duration: 0.3, delay: 0.5 },
-  },
-};
-
 function YourWatch({ params }: YourWatchProps) {
   const { watch } = params;
 
-  const [reveal, setReveal] = useState(false);
   const [selectedImg, setSelectedImg] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [addingItem, setAddingItem] = useState(false);
-  const [ProductsList, setProductsList] = useState([]);
-  const [singleProduct, setSingleProduct] = useState<SingleProduct | null>(
-    null
-  );
   const [cart, setCart] = useState();
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [err, setErr] = useState(false);
-  const [productFetchErr, setProductFetchErr] = useState(false);
+
+  const fetchProduct = async () => {
+    const { data, errors } = await storeFront(print(singleProductQuery), {
+      handle: watch,
+    });
+
+    if (errors) {
+      throw new Error("Failed to fetch products");
+    }
+
+    return data;
+  };
+
+  const { data, isLoading, error } = useQuery(watch, fetchProduct, {
+    staleTime: 60000,
+  });
+
+  const singleProduct: SingleProduct = data?.product;
   const variantId = singleProduct?.variants.edges[0].node.id;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data, errors } = await storeFront(print(singleProductQuery), {
-        handle: watch,
-      });
-
-      if (errors) {
-        setLoading(false);
-        return setProductFetchErr(true);
-      }
-
-      const id = data?.product?.id;
-      const res = await storeFront(print(relatedProducts), {
-        productId: id,
-      });
-
-      setSingleProduct(data?.product);
-      setProductsList(res?.data?.productRecommendations);
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
+  const productId = data?.product?.id;
 
   useEffect(() => {
     async function getCart() {
@@ -346,13 +303,19 @@ function YourWatch({ params }: YourWatchProps) {
     setAddingItem(false);
   };
 
-  return loading ? (
-    <div className="h-[100vh] flex items-center justify-center">
-      <Loader />
-    </div>
-  ) : productFetchErr ? (
-    <ErrPage />
-  ) : (
+  if (isLoading) {
+    return (
+      <div className="h-[100vh] flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <ErrPage />;
+  }
+
+  return (
     <div className="flex flex-col items-center overflow-hidden relative">
       <AnimatePresence mode="wait">
         {err && (
@@ -456,32 +419,11 @@ function YourWatch({ params }: YourWatchProps) {
                   <hr className="border-[#8888887d]" />
                 </div>
               )}
-              <AnimatePresence mode="wait">
-                {!reveal && (
-                  <motion.button
-                    className="btn capitalize w-fit border-b-[1px]"
-                    onClick={() => setReveal(true)}
-                    variants={price}
-                    exit="exit"
-                  >
-                    reveal the price
-                  </motion.button>
+              <span className="text-[#d80032] font-[500] py-4 text-lg">
+                {formatUSD(
+                  Number(singleProduct?.priceRange.minVariantPrice.amount)
                 )}
-              </AnimatePresence>
-              {reveal && (
-                <motion.div
-                  className="flex flex-col"
-                  variants={revel}
-                  initial="initial"
-                  animate="animate"
-                >
-                  <span className="font-[400] py-4">
-                    {formatUSD(
-                      Number(singleProduct?.priceRange.minVariantPrice.amount)
-                    )}
-                  </span>
-                </motion.div>
-              )}
+              </span>
               <button
                 onClick={handleAddToCart}
                 className="btn-secondary uppercase min-w-full min-h-[50px] font-[500] tracking-[5px] border border-gray-400 bg-white"
@@ -510,10 +452,7 @@ function YourWatch({ params }: YourWatchProps) {
         />
       </div>
       <hr className="w-[95%] mx-auto" />
-      <RecommenedProducts
-        title="YOU MAY ALSO LIKE"
-        products={ProductsList || []}
-      />
+      <RecommenedProducts title="YOU MAY ALSO LIKE" productId={productId} />
     </div>
   );
 }
