@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import gql from "graphql-tag";
 import Image from "next/image";
 import { print } from "graphql";
 import { readableDate, storeFront } from "../../utils";
 import Loader from "./Loader";
+import ErrPage from "./ErrPage";
+import { useInfiniteQuery } from "react-query";
+import { useInView } from "react-intersection-observer";
 
 type OrderVariantImage = {
   url: string;
@@ -79,117 +82,107 @@ const customerOrders = gql`
 `;
 
 function Orders() {
-  const [allOrders, setAllOrders] = useState<OrderEdge[] | []>([]);
-  const [endCursor, setEndCursor] = useState<string | undefined>();
-  const [loading, setLoading] = useState(true);
-  const [moreLoading, setMoreLoading] = useState();
-  const [nextPage, setNextPage] = useState<boolean | undefined>();
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const [customerToken, setCustomerToken] = useState();
-  //console.log(allOrders);
-
-  const initailCustomerOrders = async () => {
+  const fetchOrders = async ({ pageParam = null }) => {
     const customer = window.localStorage.getItem("customer-access-token");
     const customerData = customer ? JSON.parse(customer) : null;
     const customerAccessToken = customerData ? customerData.accessToken : null;
     const { data, errors } = await storeFront(print(customerOrders), {
       accessToken: customerAccessToken,
-      cursor: null,
+      cursor: pageParam,
     });
-    setCustomerToken(customerAccessToken);
-    setAllOrders(data?.customer?.orders?.edges);
-    setEndCursor(data?.customer?.orders?.pageInfo.endCursor);
-    setNextPage(data?.customer?.orders?.pageInfo.hasNextPage);
-    setLoading(false);
-  };
 
-  const loadMoreCustomerOrders = async () => {
-    // setMoreLoading(true);
-    const { data, errors } = await storeFront(print(customerOrders), {
-      accessToken: customerToken,
-      cursor: endCursor,
-    });
-    if (data?.customer?.orders) {
-      setAllOrders((prev) => [...prev, ...data.customer.orders.edges]);
+    if (errors) {
+      throw new Error("Failed to fetch products");
     }
-    setEndCursor(data?.customer?.orders?.pageInfo.endCursor);
-    setNextPage(data?.customer?.orders?.pageInfo.hasNextPage);
-    // setMoreLoading(false);
+
+    return data;
   };
 
-  useEffect(() => {
-    initailCustomerOrders();
-  }, []);
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery(["products"], fetchOrders, {
+    getNextPageParam: (lastPage) =>
+      lastPage?.customer?.orders?.pageInfo.endCursor,
+    staleTime: 6000,
+  });
+
+  const { ref, inView } = useInView({
+    threshold: 1,
+  });
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        if (first.isIntersecting) {
-          if (nextPage) {
-            loadMoreCustomerOrders();
-          }
-        }
-      },
-      { threshold: 1 }
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  if (error) {
+    return <ErrPage />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="h-[100vh] w-[100%] flex items-center justify-center">
+        <Loader />
+      </div>
     );
+  }
 
-    const currentRef = loadMoreRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [endCursor, nextPage]);
-
-  return loading ? (
-    <div className="h-[100vh] flex items-center justify-center">
-      <Loader />
-    </div>
-  ) : allOrders?.length === 0 ? (
+  if (
+    data?.pages.length === 1 &&
+    data?.pages[0].customer.orders.edges.length === 0
+  ) {
     <div className="flex items-center justify-center font-[300]">
       Note: You have not placed any orders yet
-    </div>
-  ) : !allOrders ? (
-    <div className="font-[300] text-sm">
-      Something went wrong. Please try again later
-    </div>
-  ) : (
-    <div className="flex justify-center flex-wrap">
-      {allOrders?.map((item: OrderEdge) => (
-        <div
-          key={item.node.id}
-          className="flex flex-col items-center justify-evenly w-[250px] h-[350px] md:w-[250px] md:h-[350px] lg:w-[300px] lg:h-[400px] p-4"
-        >
-          <span className="text-xs font-[300]">
-            {readableDate(item.node.processedAt)}
-          </span>
-          <div className="relative w-[90%] h-[75%]">
-            <Image
-              src={item.node.lineItems.edges[0].node.variant.image.url}
-              alt={item.node.lineItems.edges[0].node.title}
-              fill
-              className="object-contain"
-            />
-          </div>
-          <span className="text-xs text-center">
-            {item.node.lineItems.edges[0].node.title}
-          </span>
-          <div className="flex items-center justify-center gap-1">
-            <span className="text-xs text-center">
-              {item.node.currencyCode}
-            </span>
-            <span className="text-xs font-bold">
-              {item.node.totalPrice.amount}
-            </span>
-          </div>
+    </div>;
+  }
+
+  return (
+    <div className="flex flex-col">
+      <div className="flex justify-center flex-wrap">
+        {data?.pages.map((page) =>
+          page.customer.orders.edges.map((item: OrderEdge) => (
+            <div
+              key={item.node.id}
+              className="flex flex-col items-center justify-evenly w-[250px] h-[350px] md:w-[250px] md:h-[350px] lg:w-[300px] lg:h-[400px] p-4"
+            >
+              <span className="text-xs font-[300]">
+                {readableDate(item.node.processedAt)}
+              </span>
+              <div className="relative w-[90%] h-[75%]">
+                <Image
+                  src={item.node.lineItems.edges[0].node.variant.image.url}
+                  alt={item.node.lineItems.edges[0].node.title}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span className="text-xs text-center">
+                {item.node.lineItems.edges[0].node.title}
+              </span>
+              <div className="flex items-center justify-center gap-1">
+                <span className="text-xs text-center">
+                  {item.node.currencyCode}
+                </span>
+                <span className="text-xs font-bold">
+                  {item.node.totalPrice.amount}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      {hasNextPage && (
+        <div ref={ref} className="my-8 flex items-center justify-center">
+          <Loader />
         </div>
-      ))}
-      {moreLoading ? <Loader /> : <div ref={loadMoreRef}></div>}
+      )}
     </div>
   );
 }

@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Add, Remove } from "@mui/icons-material";
 import CheckIcon from "@mui/icons-material/Check";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type Section = {
   title: string;
@@ -14,9 +15,6 @@ type DataProp = Section[];
 type AccordionsProps = {
   data: DataProp;
   accessories?: boolean;
-  setSelectedOption: (value: string) => void;
-  option: undefined | number;
-  setOption: (value: number | undefined) => void;
 };
 
 const accordian = {
@@ -36,14 +34,20 @@ const accordian = {
   },
 };
 
-function Accordions({
-  data,
-  accessories,
-  setSelectedOption,
-  option,
-  setOption,
-}: AccordionsProps) {
+function Accordions({ data, accessories }: AccordionsProps) {
   const [active, setActive] = useState(true);
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q");
+  const router = useRouter();
+
+  const createQueryString = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(key, value);
+      return params.toString();
+    },
+    [searchParams]
+  );
 
   return (
     <div className="h-[100%] flex flex-col justify-evenly">
@@ -80,13 +84,16 @@ function Accordions({
                       <li
                         className="py-2 cursor-pointer w-fit text-xs font-[300]"
                         onClick={() => {
-                          setSelectedOption(item);
-                          setOption(i);
+                          router.push(
+                            `/${
+                              accessories ? "accessories" : "Collection"
+                            }?${createQueryString("q", item)}`
+                          );
                         }}
                       >
                         {item}
                       </li>
-                      {option === i && <CheckIcon className="text-sm" />}
+                      {query === item && <CheckIcon className="text-sm" />}
                     </div>
                   ))}
                 </ul>

@@ -10,24 +10,10 @@ import { ScrollLockContext } from "@/LockContext/LockContext";
 type SetProductSort = (value: string) => void;
 
 type FiltersProps = {
-  setProductSort: SetProductSort;
   notWatches: boolean;
-  setSelectedOption: (value: string) => void;
-  option: undefined | number;
-  setOption: (value: number | undefined) => void;
-  sort: undefined | number;
-  setSort: (value: undefined | number) => void;
 };
 
-function Filters({
-  setProductSort,
-  notWatches,
-  setSelectedOption,
-  option,
-  setOption,
-  sort,
-  setSort,
-}: FiltersProps) {
+function Filters({ notWatches }: FiltersProps) {
   const [open, setOpen] = useState(false);
   const { lockScroll, unlockScroll, locks } = useContext(ScrollLockContext);
 
@@ -86,11 +72,8 @@ function Filters({
               <div className="w-[100%] p-5">
                 <div className="mb-10">
                   <OptionAccordion
-                    setSelectedOption={setSelectedOption}
                     accessories={notWatches ? true : false}
                     data={notWatches ? option4 : option1}
-                    option={option}
-                    setOption={setOption}
                   />
                 </div>
                 <hr />
@@ -99,9 +82,7 @@ function Filters({
                 <div className="mb-10">
                   <SortAccordion
                     data={option3}
-                    setProductSort={setProductSort}
-                    sort={sort}
-                    setSort={setSort}
+                    onAccessories={notWatches ? true : false}
                   />
                 </div>
                 <hr />

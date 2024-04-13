@@ -1,8 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Add, Remove } from "@mui/icons-material";
 import CheckIcon from "@mui/icons-material/Check";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type Item = {
   name: string;
@@ -20,9 +22,7 @@ type SetProductSort = (value: string) => void;
 
 type SortAccordionProps = {
   data: DataProp;
-  setProductSort: SetProductSort;
-  sort: undefined | number;
-  setSort: (value: undefined | number) => void;
+  onAccessories: boolean;
 };
 
 const accordian = {
@@ -42,13 +42,20 @@ const accordian = {
   },
 };
 
-function SortAccordion({
-  data,
-  setProductSort,
-  sort,
-  setSort,
-}: SortAccordionProps) {
+function SortAccordion({ data, onAccessories }: SortAccordionProps) {
   const [active, setActive] = useState(true);
+  const searchParams = useSearchParams();
+  const sort = searchParams.get("sortKey");
+  const router = useRouter();
+
+  const createQueryString = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(key, value);
+      return params.toString();
+    },
+    [searchParams]
+  );
   return (
     <div className="h-[100%] flex flex-col justify-evenly">
       {data.map((section, index) => (
@@ -89,13 +96,16 @@ function SortAccordion({
                         value={item.value}
                         className="py-2 cursor-pointer w-fit text-xs font-[300]"
                         onClick={() => {
-                          setProductSort(item.value);
-                          setSort(i);
+                          router.push(
+                            `/${
+                              onAccessories ? "accessories" : "Collection"
+                            }?${createQueryString("sortKey", item.value)}`
+                          );
                         }}
                       >
                         {item.name}
                       </li>
-                      {sort === i && <CheckIcon className="text-sm" />}
+                      {sort === item.value && <CheckIcon className="text-sm" />}
                     </div>
                   ))}
                 </ul>

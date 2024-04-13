@@ -11,6 +11,9 @@ import { print } from "graphql";
 import Loader from "@/components/Loader";
 import ErrPage from "@/components/ErrPage";
 import { motion } from "framer-motion";
+import { useInfiniteQuery } from "react-query";
+import { useInView } from "react-intersection-observer";
+import Link from "next/link";
 
 type ImageNode = {
   url: string;
@@ -90,110 +93,63 @@ const productQuery = gql`
   }
 `;
 
-function ProductCollection() {
-  const [ProductsList, setProductsList] = useState<ProductList | []>([]);
-  const [loading, setLoading] = useState(false);
-  const [moreLoading, setMoreLoading] = useState(false);
-  const [nextPage, setNextPage] = useState<boolean | undefined>();
-  const [endCursor, setEndCursor] = useState<string | undefined>();
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string | undefined>();
-  const [productSort, setProductSort] = useState<undefined | string>(undefined);
-  const [option, setOption] = useState<undefined | number>();
-  const [sort, setSort] = useState<undefined | number>();
-  const [err, setErr] = useState(false);
+type searchParams = {
+  searchParams: {
+    q: string;
+    sortKey: string;
+  };
+};
 
-  const loadInitialData = async () => {
-    setLoading(true);
+function ProductCollection({ searchParams }: searchParams) {
+  const { q, sortKey } = searchParams;
+
+  const fetchProducts = async ({ pageParam = null }) => {
     const { data, errors } = await storeFront(print(productQuery), {
-      tag: `tag:${!selectedOption ? "accessories" : selectedOption}`,
-      cursor: null,
-      sortKeyValue: productSort,
-      sortOrder: !productSort ? false : true,
+      tag: `tag:${!q ? "accessories" : q}`,
+      sortKeyValue: sortKey,
+      sortOrder: !sortKey ? false : true,
+      cursor: pageParam,
     });
 
     if (errors) {
-      setLoading(false);
-      return setErr(true);
+      throw new Error("Failed to fetch products");
     }
 
-    setProductsList(data?.products?.edges);
-    setEndCursor(data?.products?.pageInfo.endCursor);
-    setNextPage(data?.products?.pageInfo.hasNextPage);
-    setLoading(false);
+    return data;
   };
 
-  const loadMoreData = async () => {
-    setMoreLoading(true);
-    const { data, errors } = await storeFront(print(productQuery), {
-      tag: `tag:${!selectedOption ? "accessories" : selectedOption}`,
-      cursor: endCursor,
-      sortKeyValue: productSort,
-      sortOrder: !productSort ? false : true,
-    });
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery(["accessories", q, sortKey], fetchProducts, {
+    getNextPageParam: (lastPage) => lastPage?.products?.pageInfo.endCursor,
+    staleTime: 6000,
+  });
 
-    if (errors) {
-      setMoreLoading(false);
-      return;
-    }
-
-    //setProductsList((prev) => [...prev, ...data.products.edges]);
-    if (data?.products?.edges) {
-      setProductsList((prevProducts) => {
-        const newProducts = data.products.edges.filter(
-          (newProduct: ProductEdge) =>
-            !prevProducts?.some(
-              (product) => product.node.handle === newProduct.node.handle
-            )
-        );
-
-        return [...prevProducts, ...newProducts];
-      });
-    }
-
-    setEndCursor(data?.products?.pageInfo.endCursor);
-    setNextPage(data?.products?.pageInfo.hasNextPage);
-    setMoreLoading(false);
-  };
+  const { ref, inView } = useInView({
+    threshold: 1,
+  });
 
   useEffect(() => {
-    setProductsList([]);
-    setEndCursor(undefined);
-    loadInitialData();
-  }, [productSort, selectedOption]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        if (first.isIntersecting) {
-          if (nextPage) {
-            loadMoreData();
-          }
-        }
-      },
-      { threshold: 1 }
-    );
-
-    const currentRef = loadMoreRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [endCursor, nextPage]);
+  if (error) {
+    return <ErrPage />;
+  }
 
-  return err ? (
-    <ErrPage />
-  ) : (
+  return (
     <div className="flex flex-col items-center justify-center">
       <div
         className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] ${
-          loading ? "opacity-[1] z-30 lg:z-[1]" : "opacity-0 z-[-1]"
+          isLoading ? "opacity-[1] z-30 lg:z-[1]" : "opacity-0 z-[-1]"
         }`}
       >
         <Loader />
@@ -202,71 +158,45 @@ function ProductCollection() {
         accessories
       </h1>
       <div className="h-6">
-        {productSort || selectedOption ? (
+        {q || sortKey ? (
           <div className="flex justify-end">
-            <button
-              className="btn h-6 font-[200] text-sm"
-              onClick={() => {
-                setProductSort(undefined);
-                setSelectedOption(undefined);
-                setOption(undefined);
-                setSort(undefined);
-              }}
-            >
-              Reset
-            </button>
+            <Link href="/accessories">
+              <button className="btn h-6 font-[200] text-sm">Reset</button>
+            </Link>
           </div>
         ) : (
           <></>
         )}
       </div>
-      <Filters
-        notWatches={true}
-        setProductSort={setProductSort}
-        setSelectedOption={setSelectedOption}
-        option={option}
-        setOption={setOption}
-        sort={sort}
-        setSort={setSort}
-      />
+      <Filters notWatches={true} />
       <div className="flex  w-[100vw] lg:w-[95vw]">
         <div className="lg:flex-[1] hidden md:block md:flex-[1.5]">
           <div className="p-5 flex flex-col justify-center gap-8 pt-10">
-            <OptionAccordion
-              accessories={false}
-              data={option4}
-              setSelectedOption={setSelectedOption}
-              option={option}
-              setOption={setOption}
-            />
-            <SortAccordion
-              data={option3}
-              setProductSort={setProductSort}
-              sort={sort}
-              setSort={setSort}
-            />
+            <OptionAccordion accessories={true} data={option4} />
+            <SortAccordion onAccessories={true} data={option3} />
           </div>
         </div>
         <div className="flex-[3] flex flex-col">
           <div className=" min-h-[100vh] flex flex-wrap items-center justify-center">
-            {ProductsList?.map((item, i) => (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: { duration: 0.5, delay: i * 0.05 },
-                }}
-              >
-                <Card item={item} accessories={true} key={item.node.handle} />
-              </motion.div>
-            ))}
+            {data?.pages.map((page, i) =>
+              page.products.edges.map((item: ProductEdge) => (
+                <motion.div
+                  key={item.node.handle}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                    transition: { duration: 0.5, delay: i * 0.05 },
+                  }}
+                >
+                  <Card item={item} accessories={false} />
+                </motion.div>
+              ))
+            )}
           </div>
-          {moreLoading ? (
-            <div className="flex items-center justify-center pb-10">
+          {hasNextPage && (
+            <div ref={ref} className="my-8 flex items-center justify-center">
               <Loader />
             </div>
-          ) : (
-            <div className="py-8" ref={loadMoreRef}></div>
           )}
         </div>
       </div>
