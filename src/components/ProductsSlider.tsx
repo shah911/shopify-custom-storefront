@@ -6,8 +6,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
-import Loader from "./Loader";
-import ErrPage from "./ErrPage";
 
 type ImageNode = {
   node: {
@@ -26,36 +24,21 @@ type ProductNode = {
 };
 
 type ProductsListType = {
-  edges: {
-    node: {
-      description: string;
-      products: {
-        edges: ProductNode[];
+  collections: {
+    edges: {
+      node: {
+        description: string;
+        products: {
+          edges: ProductNode[];
+        };
       };
-    };
-  }[];
+    }[];
+  };
 };
 
 type Props = {
   title: string;
   ProductsList: ProductsListType;
-};
-
-const accordian = {
-  initial: {
-    //height: 0,
-    opacity: 0,
-  },
-  animate: {
-    //height: "auto",
-    opacity: 1,
-    transition: { type: "tween", duration: 0.5 },
-  },
-  exit: {
-    //height: 0,
-    opacity: 0,
-    transition: { type: "tween", duration: 0.5 },
-  },
 };
 
 function ProductsSlider({ title, ProductsList }: Props) {
@@ -65,7 +48,6 @@ function ProductsSlider({ title, ProductsList }: Props) {
   const [isAtEnd, setIsAtEnd] = useState(false);
   const [show, setShow] = useState(false);
   const [desc, setDesc] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [maxChars, setMaxChars] = useState(0);
 
   const scrollSlider = (direction: number) => {
@@ -97,7 +79,8 @@ function ProductsSlider({ title, ProductsList }: Props) {
 
   useEffect(() => {
     const updateMaxChars = () => {
-      const descriptionLength = ProductsList?.edges[0].node.description.length;
+      const descriptionLength =
+        ProductsList?.collections.edges[0].node.description.length;
       const viewportWidth = window.innerWidth;
 
       const maxChars = Math.floor(viewportWidth / 3);
@@ -111,7 +94,6 @@ function ProductsSlider({ title, ProductsList }: Props) {
         setDesc(false);
         setMaxChars(descriptionLength);
       }
-      setLoading(false);
     };
 
     updateMaxChars();
@@ -121,35 +103,30 @@ function ProductsSlider({ title, ProductsList }: Props) {
     return () => window.removeEventListener("resize", updateMaxChars);
   }, []);
 
-  const Products = ProductsList?.edges[0].node.products;
+  const Products = ProductsList?.collections.edges[0].node.products;
 
-  return !ProductsList ? (
-    <ErrPage />
-  ) : (
+  return (
     <div className="h-[840px] 2xl:h-[960px] flex flex-col items-center justify-evenly">
       <div className="flex flex-col items-center justify-center gap-6 2xl:gap-12">
         <h1 className="uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] 2xl:text-[52px] font-[300] tracking-[3px]">
-          {title}
+          {title.replace(/\+/g, " ")}
         </h1>
-        {loading ? (
-          <Loader />
-        ) : (
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-sm 2xl:text-base text-center text-[#555555] font-[300] mx-auto w-[90%]">
-              {show
-                ? `${ProductsList?.edges[0].node.description.substring(
-                    0,
-                    maxChars
-                  )}...`
-                : ProductsList?.edges[0].node.description}
-            </p>
-            {desc && (
-              <button onClick={() => setShow(!show)} className="btn">
-                {show ? "Read more" : "Show less"}
-              </button>
-            )}
-          </div>
-        )}
+
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-sm 2xl:text-base text-center text-[#555555] font-[300] mx-auto w-[90%]">
+            {show
+              ? `${ProductsList?.collections.edges[0].node.description.substring(
+                  0,
+                  maxChars
+                )}...`
+              : ProductsList?.collections?.edges[0].node.description}
+          </p>
+          {desc && (
+            <button onClick={() => setShow(!show)} className="btn">
+              {show ? "Read more" : "Show less"}
+            </button>
+          )}
+        </div>
       </div>
       <hr className="w-[90%]" />
       <div
