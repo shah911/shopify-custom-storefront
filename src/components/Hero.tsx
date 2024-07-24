@@ -117,9 +117,9 @@ function Hero() {
                     <Image
                       src={item.mainImage}
                       alt={item.title}
-                      placeholder="blur"
                       fill={true}
                       sizes="50vw"
+                      priority={true}
                       className="object-cover"
                     />
                   </motion.div>
@@ -142,7 +142,7 @@ function Hero() {
                       <Image
                         src={item.secondaryImage}
                         alt={item.subtitle}
-                        placeholder="blur"
+                        priority={true}
                         fill={true}
                         sizes="25vw"
                         className="object-cover"
