@@ -67,7 +67,8 @@ function MegaMenuList({ tab, MegaMenuLinks }: Props) {
                 <div>
                   <Image
                     src={link.url}
-                    alt=""
+                    alt={link.title}
+                    // placeholder="blur"
                     height={176}
                     width={128}
                     className="object-cover"

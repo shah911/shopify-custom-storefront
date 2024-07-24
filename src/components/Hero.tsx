@@ -4,27 +4,33 @@ import Image from "next/image";
 import { PauseOutlined, PlayArrowOutlined } from "@mui/icons-material";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import img1 from "../../public/omega-slider-1.avif";
+import img2 from "../../public/omega-silder-2.avif";
+import img3 from "../../public/AT39-ZK-medium_5.jpg";
+import img4 from "../../public/omega-slider-3.avif";
+import img5 from "../../public/kv-main-sp-m-tablet.jpg";
+import img6 from "../../public/304.33.44.52.03.001_closeup.png";
 
 const data = [
   {
-    mainImage: "/omega-slider-1.avif",
-    secondaryImage: "/omega-silder-2.avif",
+    mainImage: img1,
+    secondaryImage: img2,
     title: "planet ocean dark gray",
     subtitle: "light yet strong. new ceramic",
     buttonText: "Discover more",
     link: "/yourwatch/planet-ocean-600m-co-axial-master-chronometer-gmt-45-5-mm",
   },
   {
-    mainImage: "/AT39-ZK-medium_5.jpg",
-    secondaryImage: "/omega-slider-3.avif",
+    mainImage: img3,
+    secondaryImage: img4,
     title: "Every shape of you",
     subtitle: "aqua rerra shades",
     buttonText: "Discover the collection",
     link: "/Collection",
   },
   {
-    mainImage: "/kv-main-sp-m-tablet.jpg",
-    secondaryImage: "/304.33.44.52.03.001_closeup.png",
+    mainImage: img5,
+    secondaryImage: img6,
     title: "Winter Tales",
     subtitle: "speedmaster",
     buttonText: "Discover more",
@@ -46,6 +52,7 @@ const mainImg = {
     y: 0,
     transition: {
       duration: 1,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
   exit: {
@@ -55,6 +62,7 @@ const mainImg = {
     y: 20,
     transition: {
       duration: 1,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
@@ -67,11 +75,11 @@ const desc = {
   animate: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.75 },
+    transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
   },
   exit: {
     opacity: 0,
-    transition: { duration: 0.75 },
+    transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
@@ -98,7 +106,7 @@ function Hero() {
           (item, i) =>
             i === activeIndex && (
               <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden">
+                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden bg-black">
                   <motion.div
                     className="relative h-[100%] w-[100%]"
                     variants={mainImg}
@@ -108,7 +116,8 @@ function Hero() {
                   >
                     <Image
                       src={item.mainImage}
-                      alt=""
+                      alt={item.title}
+                      placeholder="blur"
                       fill={true}
                       sizes="50vw"
                       className="object-cover"
@@ -132,7 +141,8 @@ function Hero() {
                     >
                       <Image
                         src={item.secondaryImage}
-                        alt=""
+                        alt={item.subtitle}
+                        placeholder="blur"
                         fill={true}
                         sizes="25vw"
                         className="object-cover"

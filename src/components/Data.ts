@@ -118,17 +118,17 @@ export const accessories = [
   },
 ];
 
-export const Products = [
-  { url: "/omega (3).avif", title: "globemaster" },
-  { url: "/omega-11.avif", title: "constellation" },
-  { url: "/omega-15.avif", title: "aqua terra" },
-  { url: "/omega-13.avif", title: "diver 300m" },
-  { url: "/omega-14.avif", title: "planet ocean" },
-  { url: "/omega (9).avif", title: "ladymatic" },
-  { url: "/omega (2).avif", title: "tresor" },
-  { url: "/omega (10).avif", title: "prestige" },
-  { url: "/omega (1).avif", title: "tourbillon" },
-];
+// export const Products = [
+//   { url: img1, title: "globemaster" },
+//   { url: img2, title: "constellation" },
+//   { url: img3, title: "aqua terra" },
+//   { url: img4, title: "diver 300m" },
+//   { url: img5, title: "planet ocean" },
+//   { url: img6, title: "ladymatic" },
+//   { url: img7, title: "tresor" },
+//   { url: img8, title: "prestige" },
+//   { url: img9, title: "tourbillon" },
+// ];
 
 export const List1 = [
   "Globemaster",
