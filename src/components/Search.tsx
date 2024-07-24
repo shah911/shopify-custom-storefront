@@ -10,11 +10,11 @@ const bg = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
-    transition: { ease: "easeInOut", duration: 0.2 },
+    transition: { ease: "easeInOut", duration: 0.3 },
   },
   exit: {
     opacity: 0,
-    transition: { ease: "easeInOut", duration: 0.2, delay: 0.5 },
+    transition: { ease: "easeInOut", duration: 0.3 },
   },
 };
 
