@@ -51,7 +51,7 @@ const mainImg = {
     x: 0,
     y: 0,
     transition: {
-      duration: 1,
+      duration: 2,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -61,7 +61,7 @@ const mainImg = {
     x: -20,
     y: 20,
     transition: {
-      duration: 1,
+      duration: 0.75,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -100,13 +100,13 @@ function Hero() {
   }, [play]);
 
   return (
-    <div className="flex overflow-hidden">
-      <AnimatePresence mode="wait">
+    <div className="overflow-hidden">
+      <AnimatePresence mode="popLayout">
         {data.map(
           (item, i) =>
             i === activeIndex && (
               <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden bg-black">
+                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden">
                   <motion.div
                     className="relative h-[100%] w-[100%]"
                     variants={mainImg}
