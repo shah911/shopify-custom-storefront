@@ -61,7 +61,7 @@ const mainImg = {
     x: -20,
     y: 20,
     transition: {
-      duration: 0.75,
+      duration: 0.5,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -101,12 +101,13 @@ function Hero() {
 
   return (
     <div className="overflow-hidden">
-      <AnimatePresence mode="popLayout">
+      {/* add the mode to popLayout to have the omega effect */}
+      <AnimatePresence mode="wait">
         {data.map(
           (item, i) =>
             i === activeIndex && (
               <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden">
+                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden bg-[#0000007a]">
                   <motion.div
                     className="relative h-[100%] w-[100%]"
                     variants={mainImg}
