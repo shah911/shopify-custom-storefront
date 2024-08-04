@@ -107,7 +107,7 @@ function Hero() {
           (item, i) =>
             i === activeIndex && (
               <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden bg-[#0000007a]">
+                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden bg-[#f2f2f2]">
                   <motion.div
                     className="relative h-[100%] w-[100%]"
                     variants={mainImg}
