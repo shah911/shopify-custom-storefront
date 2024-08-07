@@ -71,17 +71,20 @@ function User() {
       >
         <Loader />
       </div>
-      <div className="h-[350px] md:h-[350px] lg:h-[400px] w-[100%] relative">
-        <Image
-          src="/MyOmega-ImgTetiere-large_1.jpg"
-          alt=""
-          fill={true}
-          className="object-cover brightness-50"
-        />
-        <div className="absolute h-[100%] w-[100%] flex items-center justify-center">
-          <span className="text-white text-3xl md:text-5xl font-thin tracking-[3px]">
-            My Account
-          </span>
+      <div className="h-[350px] md:h-[350px] lg:h-[400px] w-[100%]">
+        <div className="h-full w-full relative">
+          <Image
+            src="/MyOmega-ImgTetiere-large_1.jpg"
+            priority={true}
+            alt=""
+            fill={true}
+            className="object-cover brightness-50"
+          />
+          <div className="absolute h-[100%] w-[100%] flex items-center justify-center">
+            <span className="text-white text-3xl md:text-5xl font-thin tracking-[3px]">
+              My Account
+            </span>
+          </div>
         </div>
       </div>
       <div className="flex items-center justify-evenly flex-wrap h-auto md:h-[125px] w-[100%] bg-[#f2f2f2]">
@@ -100,7 +103,7 @@ function User() {
           </Link>
         ))}
         <div
-          className="flex flex-col items-center justify-center gap-3 h-[100%] w-[150px] cursor-pointer p-3 group"
+          className="flex flex-col cursor-pointer items-center justify-center gap-3 h-[100%] w-[150px] p-3 group"
           onClick={handleLogout}
         >
           <LoginOutlined className="text-2xl transition-all duration-500 group-hover:translate-y-[-5px]" />
