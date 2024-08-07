@@ -1,15 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { PauseOutlined, PlayArrowOutlined } from "@mui/icons-material";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import img1 from "../../public/omega-slider-1.avif";
 import img2 from "../../public/omega-silder-2.avif";
 import img3 from "../../public/AT39-ZK-medium_5.jpg";
 import img4 from "../../public/omega-slider-3.avif";
 import img5 from "../../public/kv-main-sp-m-tablet.jpg";
 import img6 from "../../public/304.33.44.52.03.001_closeup.png";
+import HeroImages from "./HeroImages";
+import HeroSubSection from "./HeroSubSection";
 
 const data = [
   {
@@ -101,71 +100,15 @@ function Hero() {
 
   return (
     <div className="overflow-hidden">
-      {/* add the mode to popLayout to have the omega effect */}
-      <AnimatePresence mode="wait">
-        {data.map(
-          (item, i) =>
-            i === activeIndex && (
-              <div className="flex mx-auto flex-col md:flex-row" key={i}>
-                <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden bg-[#f2f2f2]">
-                  <motion.div
-                    className="relative h-[100%] w-[100%]"
-                    variants={mainImg}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                  >
-                    <Image
-                      src={item.mainImage}
-                      alt={item.title}
-                      fill={true}
-                      sizes="50vw"
-                      priority={true}
-                      className="object-cover"
-                    />
-                  </motion.div>
-                </div>
-                <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[180px] md:w-[50vw] md:h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] gap-5">
-                  <motion.div
-                    className="lg:h-[100%] flex flex-col items-center justify-center gap-5"
-                    variants={desc}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                  >
-                    <div
-                      className={`relative ${
-                        i === 1
-                          ? "md:w-[25vw] lg:w-[20vw] h-[250px] lg:h-[360px] 2xl:h-[400px] 2xl:w-[15vw] hidden md:flex"
-                          : "md:w-[30vw] lg:w-[25vw] h-[125px] lg:h-[200px] 2xl:h-[250px] hidden md:flex"
-                      }`}
-                    >
-                      <Image
-                        src={item.secondaryImage}
-                        alt={item.subtitle}
-                        priority={true}
-                        fill={true}
-                        sizes="25vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <span className="uppercase font-[300] text-[26px] md:text-[20px] lg:text-[28px]">
-                        {item.title}
-                      </span>
-                      <span className="uppercase font-light text-[15px] md:text-[10px] lg:text-[16px] tracking-[2px]">
-                        {item.subtitle}
-                      </span>
-                    </div>
-                    <button className="btn mt-1">
-                      <Link href={item.link}>{item.buttonText}</Link>
-                    </button>
-                  </motion.div>
-                </div>
-              </div>
-            )
-        )}
-      </AnimatePresence>
+      <div className="flex mx-auto flex-col md:flex-row overflow-hidden">
+        <div className="w-[100vw] md:w-[50vw] h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] overflow-hidden bg-[#f2f2f2]">
+          <HeroImages activeIndex={activeIndex} />
+        </div>
+        <div className="bg-[#f2f2f2] flex flex-col items-center justify-center h-[180px] md:w-[50vw] md:h-[450px] lg:h-[700px] 2xl:h-[840px] 4xl:h-[960px] gap-5">
+          <HeroSubSection activeIndex={activeIndex} />
+        </div>
+      </div>
+
       <div className="flex items-center justify-center gap-4 absolute top-[715px] md:top-[475px] lg:top-[750px] 2xl:top-[900px] 4xl:top-[1000px] left-0 right-0">
         <div className="cursor-pointer" onClick={() => setPlay(!play)}>
           {play ? (
