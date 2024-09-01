@@ -53,49 +53,90 @@ const desc = {
 
 function HeroSubSection({ activeIndex }: { activeIndex: number }) {
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      {data.map(
-        (item, i) =>
-          i === activeIndex && (
-            <motion.div
-              key={i}
-              className="lg:h-[100%] flex flex-col items-center justify-center gap-5"
-              variants={desc}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              <div
-                className={`relative ${
-                  i === 1
-                    ? "md:w-[25vw] lg:w-[20vw] h-[250px] lg:h-[360px] 2xl:h-[400px] 2xl:w-[15vw] hidden md:flex"
-                    : "md:w-[30vw] lg:w-[25vw] h-[125px] lg:h-[200px] 2xl:h-[250px] hidden md:flex"
-                }`}
+    <>
+      {data.map((item, i) => (
+        <motion.div
+          key={i}
+          className="lg:h-[100%] -z-10 hidden"
+          variants={desc}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+        >
+          <div
+            className={`relative ${
+              i === 1
+                ? "md:w-[25vw] lg:w-[20vw] h-[250px] lg:h-[360px] 2xl:h-[400px] 2xl:w-[15vw] hidden md:flex"
+                : "md:w-[30vw] lg:w-[25vw] h-[125px] lg:h-[200px] 2xl:h-[250px] hidden md:flex"
+            }`}
+          >
+            <Image
+              src={item.secondaryImage}
+              alt={item.subtitle}
+              priority={true}
+              fill={true}
+              sizes="25vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="uppercase font-[300] text-[26px] md:text-[20px] lg:text-[28px]">
+              {item.title}
+            </span>
+            <span className="uppercase font-light text-[15px] md:text-[10px] lg:text-[16px] tracking-[2px]">
+              {item.subtitle}
+            </span>
+          </div>
+          <button className="btn mt-1">
+            <Link href={item.link}>{item.buttonText}</Link>
+          </button>
+        </motion.div>
+      ))}
+
+      <AnimatePresence mode="wait" initial={false}>
+        {data.map(
+          (item, i) =>
+            i === activeIndex && (
+              <motion.div
+                key={i}
+                className="lg:h-[100%] flex flex-col items-center justify-center gap-5"
+                variants={desc}
+                initial="initial"
+                animate="animate"
+                exit="exit"
               >
-                <Image
-                  src={item.secondaryImage}
-                  alt={item.subtitle}
-                  priority={true}
-                  fill={true}
-                  sizes="25vw"
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="uppercase font-[300] text-[26px] md:text-[20px] lg:text-[28px]">
-                  {item.title}
-                </span>
-                <span className="uppercase font-light text-[15px] md:text-[10px] lg:text-[16px] tracking-[2px]">
-                  {item.subtitle}
-                </span>
-              </div>
-              <button className="btn mt-1">
-                <Link href={item.link}>{item.buttonText}</Link>
-              </button>
-            </motion.div>
-          )
-      )}
-    </AnimatePresence>
+                <div
+                  className={`relative ${
+                    i === 1
+                      ? "md:w-[25vw] lg:w-[20vw] h-[250px] lg:h-[360px] 2xl:h-[400px] 2xl:w-[15vw] hidden md:flex"
+                      : "md:w-[30vw] lg:w-[25vw] h-[125px] lg:h-[200px] 2xl:h-[250px] hidden md:flex"
+                  }`}
+                >
+                  <Image
+                    src={item.secondaryImage}
+                    alt={item.subtitle}
+                    priority={true}
+                    fill={true}
+                    sizes="25vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="uppercase font-[300] text-[26px] md:text-[20px] lg:text-[28px]">
+                    {item.title}
+                  </span>
+                  <span className="uppercase font-light text-[15px] md:text-[10px] lg:text-[16px] tracking-[2px]">
+                    {item.subtitle}
+                  </span>
+                </div>
+                <button className="btn mt-1">
+                  <Link href={item.link}>{item.buttonText}</Link>
+                </button>
+              </motion.div>
+            )
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

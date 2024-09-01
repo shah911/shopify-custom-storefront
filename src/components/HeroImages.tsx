@@ -66,30 +66,52 @@ const mainImg = {
 
 function HeroImages({ activeIndex }: { activeIndex: number }) {
   return (
-    <AnimatePresence mode="popLayout" initial={false}>
-      {data.map(
-        (item, i) =>
-          i === activeIndex && (
-            <motion.div
-              key={i}
-              className="relative h-[100%] w-[100%]"
-              variants={mainImg}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              <Image
-                src={item.mainImage}
-                alt={item.title}
-                fill={true}
-                sizes="50vw"
-                priority={true}
-                className="object-cover"
-              />
-            </motion.div>
-          )
-      )}
-    </AnimatePresence>
+    <>
+      {data.map((item, i) => (
+        <motion.div
+          key={i}
+          className="relative h-[100%] w-[100%] -z-10 hidden"
+          variants={mainImg}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+        >
+          <Image
+            src={item.mainImage}
+            alt={item.title}
+            fill={true}
+            sizes="50vw"
+            priority={true}
+            className="object-cover"
+          />
+        </motion.div>
+      ))}
+
+      <AnimatePresence mode="popLayout" initial={false}>
+        {data.map(
+          (item, i) =>
+            i === activeIndex && (
+              <motion.div
+                key={i}
+                className="relative h-[100%] w-[100%]"
+                variants={mainImg}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <Image
+                  src={item.mainImage}
+                  alt={item.title}
+                  fill={true}
+                  sizes="50vw"
+                  priority={true}
+                  className="object-cover"
+                />
+              </motion.div>
+            )
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
