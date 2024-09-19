@@ -63,7 +63,7 @@ function ResetPassword({ params }: params) {
   } = useForm<FormData>();
 
   const [notify, setNotify] = useState(false);
-  const [errMsg, setErrMsg] = useState<undefined | string>();
+  const [errMsg, setErrMsg] = useState<null | string>();
   const [loading, setLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(true);
 
@@ -102,6 +102,10 @@ function ResetPassword({ params }: params) {
       setErrMsg(
         "This link has been expired, please initiate a new password reset request."
       );
+      setNotify(true);
+    } else {
+      // Success case: Display the success message
+      setErrMsg(null); // Clear any error message
       setNotify(true);
     }
     setLoading(false);
