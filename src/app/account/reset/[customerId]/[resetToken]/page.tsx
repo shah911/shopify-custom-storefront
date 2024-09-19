@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { print } from "graphql";
 import gql from "graphql-tag";
 import { useForm } from "react-hook-form";
@@ -65,6 +65,19 @@ function ResetPassword({ params }: params) {
   const [notify, setNotify] = useState(false);
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
+
+  useEffect(() => {
+    const customer = window.localStorage.getItem("customer-access-token");
+    const customerData = customer ? JSON.parse(customer) : null;
+    const customerAccessToken = customerData ? customerData.accessToken : null;
+
+    if (customerAccessToken) {
+      router.push("/account");
+      return;
+    }
+    setIsMounted(false);
+  }, []);
   //console.log(errMsg);
 
   const onSubmit = async (formData: FormData) => {
@@ -95,7 +108,11 @@ function ResetPassword({ params }: params) {
     // console.log(data);
     // console.log(errors);
   };
-  return (
+  return isMounted ? (
+    <div className="h-screen flex items-center justify-center">
+      <Loader />
+    </div>
+  ) : (
     <div className="relative flex flex-col">
       <div className="absolute top-0 left-0 w-full">
         <AnimatePresence mode="wait">

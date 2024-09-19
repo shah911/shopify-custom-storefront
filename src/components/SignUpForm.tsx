@@ -61,6 +61,20 @@ function SignUpForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const [isMounted, setIsMounted] = useState(true);
+
+  useEffect(() => {
+    const customer = window.localStorage.getItem("customer-access-token");
+    const customerData = customer ? JSON.parse(customer) : null;
+    const customerAccessToken = customerData ? customerData.accessToken : null;
+
+    if (customerAccessToken) {
+      router.push("/account");
+      return;
+    }
+    setIsMounted(false);
+  }, []);
+
   const onSubmit = async (formData: FormData) => {
     //console.log(formData);
     setLoading(true);
@@ -111,7 +125,11 @@ function SignUpForm() {
     // console.log(errors);
   };
 
-  return (
+  return isMounted ? (
+    <div className="h-screen flex items-center justify-center">
+      <Loader />
+    </div>
+  ) : (
     <div className="h-[600px] flex flex-col items-center justify-center">
       <div
         className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] ${
