@@ -46,7 +46,7 @@ function Navbar() {
           </div>
           <div className="flex-[1] flex items-center justify-end gap-4">
             <Search />
-            <Link href="/myaccount" className="hidden lg:flex">
+            <Link href="/account" className="hidden lg:flex">
               <Image
                 src="/user.svg"
                 alt="user"

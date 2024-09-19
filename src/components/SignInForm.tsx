@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 import { print } from "graphql";
 import { storeFront } from "../../utils";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "./Loader";
 
 type FormData = {
@@ -35,8 +35,20 @@ function SignInForm() {
     formState: { errors },
   } = useForm<FormData>();
   const [errorMsg, setErrorMsg] = useState<string | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const customer = window.localStorage.getItem("customer-access-token");
+    const customerData = customer ? JSON.parse(customer) : null;
+    const customerAccessToken = customerData ? customerData.accessToken : null;
+
+    if (customerAccessToken) {
+      router.push("/account");
+      return;
+    }
+    setLoading(false);
+  }, []);
 
   const onSubmit = async (formData: FormData) => {
     //console.log(formData);
@@ -62,7 +74,7 @@ function SignInForm() {
         "customer-access-token",
         JSON.stringify(data.customerAccessTokenCreate.customerAccessToken)
       );
-      router.push("/");
+      router.push("/account");
       setLoading(false);
     } else if (errors) {
       setErrorMsg(
@@ -74,15 +86,12 @@ function SignInForm() {
     //console.log(data);
   };
 
-  return (
+  return loading ? (
+    <div className="h-screen w-full flex items-center justify-center">
+      <Loader />
+    </div>
+  ) : (
     <div className="h-[900px] md:h-[500px] lg:h-[600px]">
-      <div
-        className={`h-[100vh] w-[100%] flex items-center justify-center fixed top-0 bg-[rgba(255,255,255,.5)] ${
-          loading ? "opacity-[1] z-10" : "opacity-0 z-[-10]"
-        }`}
-      >
-        <Loader />
-      </div>
       <h1 className="py-10 lg:py-20 uppercase text-center text-[#c40d2e] text-3xl lg:text-[42px] font-[300] tracking-[3px]">
         my account
       </h1>
@@ -130,7 +139,7 @@ function SignInForm() {
               </span>
             )}
           </div>
-          <Link href="/forgotpassword" className="w-fit">
+          <Link href="/account/forgotpassword" className="w-fit">
             <span className="btn capitalize w-fit text-[#c40d2e] font-[500]">
               forget your password?
             </span>
@@ -153,7 +162,7 @@ function SignInForm() {
             </p>
           </div>
           <div>
-            <Link href="/signup" className="w-[100%]">
+            <Link href="/account/signup" className="w-[100%]">
               <button className="w-[100%] btn-secondary uppercase text-lg h-12 border border-gray-400">
                 sign up
               </button>

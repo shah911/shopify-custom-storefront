@@ -136,7 +136,7 @@ function Orders() {
 
   if (
     data?.pages.length === 1 &&
-    data?.pages[0].customer.orders.edges.length === 0
+    data?.pages[0].customer?.orders.edges.length === 0
   ) {
     <div className="flex items-center justify-center font-[300]">
       Note: You have not placed any orders yet
@@ -147,7 +147,7 @@ function Orders() {
     <div className="flex flex-col">
       <div className="flex justify-center flex-wrap">
         {data?.pages.map((page) =>
-          page.customer.orders.edges.map((item: OrderEdge) => (
+          page.customer?.orders.edges.map((item: OrderEdge) => (
             <div
               key={item.node.id}
               className="flex flex-col items-center justify-evenly w-[250px] h-[350px] md:w-[250px] md:h-[350px] lg:w-[300px] lg:h-[400px] p-4"

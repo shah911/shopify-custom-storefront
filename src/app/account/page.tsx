@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import SignInForm from "@/components/SignInForm";
 import UserDashboard from "@/components/UserDashboard";
 import Loader from "@/components/Loader";
 import { storeFront } from "../../../utils";
 import { print } from "graphql";
 import gql from "graphql-tag";
+import { useRouter } from "next/navigation";
 
 const customerLogout = gql`
   mutation customerAccessTokenDelete($customerAccessToken: String!) {
@@ -21,17 +21,21 @@ const customerLogout = gql`
 `;
 
 function MyAccount() {
-  const [user, setUser] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   useEffect(() => {
     const customer = window.localStorage.getItem("customer-access-token");
     const customerData = customer ? JSON.parse(customer) : null;
     const customerAccessToken = customerData ? customerData.accessToken : null;
     const tokenExpiredDate = customerData ? customerData.expiresAt : null;
     const date = new Date().toISOString();
-    if (tokenExpiredDate > date && customerAccessToken) {
-      setUser(true);
-    } else {
+
+    if (!customerAccessToken) {
+      router.push("/account/signin");
+      return;
+    }
+
+    if (tokenExpiredDate < date && customerAccessToken) {
       const invalidateUser = async () => {
         const { data, errors } = await storeFront(print(customerLogout), {
           customerAccessToken: customerAccessToken,
@@ -40,7 +44,8 @@ function MyAccount() {
         //console.log(data);
       };
       invalidateUser();
-      setUser(false);
+      router.push("/account/signin");
+      return;
     }
     setLoading(false);
   }, []);
@@ -50,7 +55,7 @@ function MyAccount() {
       <Loader />
     </div>
   ) : (
-    <div>{user ? <UserDashboard /> : <SignInForm />}</div>
+    <UserDashboard />
   );
 }
 

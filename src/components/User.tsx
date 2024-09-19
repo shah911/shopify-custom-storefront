@@ -16,17 +16,17 @@ import Loader from "./Loader";
 
 const data = [
   {
-    url: "/myaccount",
+    url: "/account",
     title: "my dashboard",
     icon: <AllInboxOutlined className="text-3xl" />,
   },
   {
-    url: "/myaccount/info-edit",
+    url: "/account/edit",
     title: "my personal information",
     icon: <TuneOutlined className="text-3xl" />,
   },
   {
-    url: "/myaccount/address-edit",
+    url: "/account/edit-address",
     title: "my address",
     icon: <LocationOnOutlined className="text-3xl" />,
   },
@@ -106,7 +106,9 @@ function User() {
           className="flex flex-col cursor-pointer items-center justify-center gap-3 h-[100%] w-[150px] p-3 group"
           onClick={handleLogout}
         >
-          <LoginOutlined className="text-2xl transition-all duration-500 group-hover:translate-y-[-5px]" />
+          <span className=" transition-all duration-500 group-hover:translate-y-[-5px]">
+            <LoginOutlined className="text-2xl" />
+          </span>
           <span className="uppercase font-[300] text-[14px] text-center">
             logout
           </span>

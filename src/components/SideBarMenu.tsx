@@ -97,7 +97,7 @@ function SideBarMenu() {
             watch finder
           </button>
         </Link>
-        <Link href="/myaccount">
+        <Link href="/account">
           <button className="btn-primary text-[14px] uppercase py-2 px-6">
             My account
           </button>
