@@ -105,9 +105,12 @@ function ResetPassword({ params }: params) {
       );
       setNotify(true);
     } else {
-      // Success case: Display the success message
-      setErrMsg(null); // Clear any error message
+      setErrMsg(null);
       setNotify(true);
+      // Delay the redirection by 2 seconds
+      setTimeout(() => {
+        router.push("/account/signin");
+      }, 2000); // 2000 ms = 2 seconds
     }
     setLoading(false);
     // console.log(data);
