@@ -91,6 +91,7 @@ function ResetPassword({ params }: params) {
       },
       customerId: `gid://shopify/Customer/${customerId}`,
     });
+    // console.log(data, errors);
     if (errors) {
       setErrMsg(
         errors[0].message
@@ -98,7 +99,7 @@ function ResetPassword({ params }: params) {
           : "Something went wrong. Please try again later."
       );
       setNotify(true);
-    } else if (data?.customerReset?.customerUserErrors[0].message) {
+    } else if (data?.customerReset?.customerUserErrors[0]?.message) {
       setErrMsg(
         "This link has been expired, please initiate a new password reset request."
       );
