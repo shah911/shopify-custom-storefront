@@ -6,6 +6,12 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
+import { Navigation } from "swiper/modules";
+import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { motion } from "framer-motion";
+import Loader from "./Loader";
 
 type ImageNode = {
   node: {
@@ -42,40 +48,10 @@ type Props = {
 };
 
 function ProductsSlider({ title, ProductsList }: Props) {
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const [isAtStart, setIsAtStart] = useState(true);
-  const [isAtEnd, setIsAtEnd] = useState(false);
   const [show, setShow] = useState(false);
   const [desc, setDesc] = useState(false);
   const [maxChars, setMaxChars] = useState(0);
-
-  const scrollSlider = (direction: number) => {
-    if (sliderRef.current) {
-      const offsetWidth = sliderRef.current.offsetWidth;
-      sliderRef.current.scrollBy({
-        left: direction * offsetWidth,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const handleScroll = () => {
-    if (sliderRef.current && progressBarRef.current) {
-      const scrollLeft = sliderRef.current.scrollLeft;
-      const maxScrollLeft =
-        sliderRef.current.scrollWidth - sliderRef.current.clientWidth;
-      const left = `${(scrollLeft / maxScrollLeft) * 75}%`;
-      progressBarRef.current.style.left = left;
-
-      setIsAtStart(scrollLeft === 0);
-      setIsAtEnd(scrollLeft >= maxScrollLeft - 5);
-    }
-  };
-
-  useEffect(() => {
-    handleScroll();
-  }, []);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const updateMaxChars = () => {
@@ -105,6 +81,77 @@ function ProductsSlider({ title, ProductsList }: Props) {
 
   const Products = ProductsList?.collections.edges[0].node.products;
 
+  const swiperRef = useRef<SwiperRef>(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+    const swiperInstance = swiperRef.current?.swiper;
+
+    const updateNavButtons = () => {
+      if (swiperInstance) {
+        setIsBeginning(swiperInstance.isBeginning);
+        setIsEnd(swiperInstance.isEnd);
+      }
+    };
+
+    const updateProgress = () => {
+      if (swiperInstance) {
+        const currentSlide = swiperInstance.activeIndex;
+        const totalSlides = swiperInstance.slides.length;
+
+        // Calculate the fixed 25% width per slide progress
+        const totalVisibleSlides = Number(swiperInstance.params.slidesPerView);
+        const translateX =
+          (currentSlide / (totalSlides - totalVisibleSlides)) * 75;
+        setProgress(translateX);
+      }
+    };
+
+    const updateProgressWhileDragging = () => {
+      if (swiperInstance) {
+        // Use Swiper's progress directly for smoother dragging
+        const progress = swiperInstance.progress; // Value from 0 to 1
+        const translateX = progress * 75; // Fixed 75% movement range for the bar
+        if (progress < 0) {
+          setProgress(0);
+        } else if (progress > 1) {
+          setProgress(75);
+        } else {
+          setProgress(translateX);
+        }
+      }
+    };
+
+    if (swiperInstance) {
+      swiperInstance.on("slideChange", updateNavButtons);
+      swiperInstance.on("slideChange", updateProgress);
+
+      // Add the real-time progress update on dragging
+      swiperInstance.on("progress", updateProgressWhileDragging);
+
+      updateNavButtons();
+    }
+
+    return () => {
+      if (swiperInstance) {
+        swiperInstance.off("slideChange", updateNavButtons);
+        swiperInstance.off("slideChange", updateProgress);
+        swiperInstance.off("progress", updateProgressWhileDragging);
+      }
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="h-[840px] 2xl:h-[960px] flex flex-col items-center justify-evenly">
       <div className="flex flex-col items-center justify-center gap-6 2xl:gap-12">
@@ -129,52 +176,63 @@ function ProductsSlider({ title, ProductsList }: Props) {
         </div>
       </div>
       <hr className="w-[90%]" />
-      <div
-        ref={sliderRef}
-        onScroll={handleScroll}
-        className="w-[100%] flex overflow-x-scroll scrollbar-hide snap-scroll"
-      >
-        {Products?.edges.map((item: ProductNode) => (
-          <div
-            key={item.node.handle}
-            className="h-[400px] flex flex-col items-center justify-evenly snap-start"
-          >
-            <Link
-              href={`/yourwatch/${item.node.handle}`}
-              className="p-4 h-[350px] lg:h-[270px] w-[50vw] md:w-[33.33vw] lg:w-[25vw] relative"
-            >
-              <Image
-                src={item.node.images.edges[0]?.node?.url}
-                alt={item.node.handle}
-                fill
-                className="object-contain"
-              />
-            </Link>
-            <span className="w-[80%] text-center uppercase font-[300] text-xs 2xl:text-sm">
-              {item.node.title}
-            </span>
-          </div>
-        ))}
+      <div className="flex w-full">
+        <Swiper
+          ref={swiperRef}
+          navigation={{
+            nextEl: ".custom-next",
+            prevEl: ".custom-prev",
+          }}
+          modules={[Navigation]}
+          speed={1000}
+          breakpoints={{
+            380: { slidesPerView: 2 },
+            768: { slidesPerView: 3 },
+            1024: { slidesPerView: 4 },
+          }}
+        >
+          {Products?.edges.map((item, i) => (
+            <SwiperSlide key={i}>
+              <div className="h-[400px] flex flex-col items-center justify-evenly snap-start">
+                <Link
+                  href={`/yourwatch/${item.node.handle}`}
+                  className="p-4 h-[270px] w-[50vw] md:w-[33.33vw] lg:w-[25vw] relative"
+                >
+                  <Image
+                    src={item.node.images.edges[0]?.node?.url}
+                    alt={item.node.handle}
+                    fill
+                    className="object-contain"
+                  />
+                </Link>
+                <span className="w-[80%] text-center uppercase font-[300] text-xs 2xl:text-sm">
+                  {item.node.title}
+                </span>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
       <div className="flex items-center justify-center gap-4 w-[90vw]">
-        <div className="h-[5px] w-[90%] bg-[#f2f2f2] relative">
-          <div
+        <div className="h-[5px] w-[90%] bg-[#f2f2f2] overflow-hidden relative">
+          <motion.div
+            animate={{
+              left: progress + "%",
+              transition: { duration: 1, ease: [0.645, 0.075, 0.275, 0.995] },
+            }}
             className="h-[5px] w-[25%] bg-[#c40d2e] absolute top-0 left-0"
-            ref={progressBarRef}
-          ></div>
+          ></motion.div>
         </div>
         <div className="flex items-center justify-center gap-[3px]">
           <button
-            onClick={() => scrollSlider(-1)}
-            className="bg-[#f2f2f2] border-none p-2 lg:p-3 flex items-center justify-center btn-secondary cursor-pointer"
-            disabled={isAtStart}
+            className="custom-prev bg-[#f2f2f2] border-none p-2 lg:p-3 flex items-center justify-center btn-secondary cursor-pointer"
+            disabled={isBeginning}
           >
             <ArrowBackIosNewOutlined className="text-lg" />
           </button>
           <button
-            onClick={() => scrollSlider(1)}
-            className="bg-[#f2f2f2] border-none p-2 lg:p-3 flex items-center justify-center btn-secondary cursor-pointer"
-            disabled={isAtEnd}
+            className="custom-next bg-[#f2f2f2] border-none p-2 lg:p-3 flex items-center justify-center btn-secondary cursor-pointer"
+            disabled={isEnd}
           >
             <ArrowForwardIosOutlined className="text-lg" />
           </button>

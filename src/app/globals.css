@@ -310,3 +310,12 @@ input2:valid ~ label {
   background-color: white;
   padding: 0 0.2em;
 }
+
+.swiper-wrapper {
+  --swiper-wrapper-transition-timing-function: cubic-bezier(
+    0.645,
+    0.075,
+    0.275,
+    0.995
+  ) !important;
+}
