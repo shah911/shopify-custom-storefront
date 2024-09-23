@@ -144,13 +144,13 @@ function ProductsSlider({ title, ProductsList }: Props) {
     };
   }, []);
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="h-screen flex items-center justify-center">
-  //       <Loader />
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="h-[840px] 2xl:h-[960px] flex flex-col items-center justify-evenly">
