@@ -54,46 +54,6 @@ const RelatedProducts = gql`
 `;
 
 function RecommenedProducts({ title, productId }: RecommenedProductsProps) {
-  const fetchProducts = async () => {
-    const { data, errors } = await storeFront(print(RelatedProducts), {
-      productId: productId,
-    });
-
-    if (errors) {
-      throw new Error("Failed to fetch products");
-    }
-
-    return data;
-  };
-
-  const { data, isLoading, error } = useQuery(productId, fetchProducts, {
-    staleTime: 60000,
-  });
-
-  const products = data?.productRecommendations;
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-4 py-8">
-        <p className="text-sm font-[300]">
-          Sorry, something went wrong while fetching the recommended products.
-        </p>
-        <button
-          className="btn"
-          onClick={() => {
-            window.location.reload();
-          }}
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   const swiperRef = useRef<SwiperRef>(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -155,6 +115,46 @@ function RecommenedProducts({ title, productId }: RecommenedProductsProps) {
       }
     };
   }, []);
+
+  const fetchProducts = async () => {
+    const { data, errors } = await storeFront(print(RelatedProducts), {
+      productId: productId,
+    });
+
+    if (errors) {
+      throw new Error("Failed to fetch products");
+    }
+
+    return data;
+  };
+
+  const { data, isLoading, error } = useQuery(productId, fetchProducts, {
+    staleTime: 60000,
+  });
+
+  const products = data?.productRecommendations;
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-8">
+        <p className="text-sm font-[300]">
+          Sorry, something went wrong while fetching the recommended products.
+        </p>
+        <button
+          className="btn"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="h-[600px] w-[90vw] md:w-[75vw] 2xl:h-[768px] mx-auto  flex flex-col items-center justify-evenly  relative">
