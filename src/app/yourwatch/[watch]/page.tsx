@@ -355,6 +355,7 @@ function YourWatch({ params }: YourWatchProps) {
                     src={img.node.url}
                     alt=""
                     fill
+                    priority={true}
                     className="object-contain"
                     onClick={() => setSelectedImg(i)}
                   />
@@ -379,6 +380,7 @@ function YourWatch({ params }: YourWatchProps) {
                         src={img.node.url || ""}
                         alt=""
                         fill
+                        priority={true}
                         className="object-contain"
                       />
                     </motion.div>
