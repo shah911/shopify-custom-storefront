@@ -11,7 +11,7 @@ import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { motion } from "framer-motion";
-import Loader from "./Loader";
+// import Loader from "./Loader";
 
 type ImageNode = {
   node: {
@@ -186,7 +186,7 @@ function ProductsSlider({ title, ProductsList }: Props) {
           modules={[Navigation]}
           speed={1000}
           breakpoints={{
-            380: { slidesPerView: 2 },
+            350: { slidesPerView: 2 },
             768: { slidesPerView: 3 },
             1024: { slidesPerView: 4 },
           }}

@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { storeFront } from "../../utils";
 import { useQuery } from "react-query";
-import Loader from "./Loader";
+// import Loader from "./Loader";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -171,7 +171,7 @@ function RecommenedProducts({ title, productId }: RecommenedProductsProps) {
           modules={[Navigation]}
           speed={1000}
           breakpoints={{
-            380: { slidesPerView: 2 },
+            350: { slidesPerView: 2 },
             768: { slidesPerView: 2.5 },
             1024: { slidesPerView: 3 },
           }}
