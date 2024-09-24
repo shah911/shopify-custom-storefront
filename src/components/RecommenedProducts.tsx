@@ -187,6 +187,7 @@ function RecommenedProducts({ title, productId }: RecommenedProductsProps) {
                     src={item.images.edges[0]?.node?.url}
                     alt={item.handle}
                     fill
+                    priority={true}
                     className="object-contain"
                   />
                 </Link>

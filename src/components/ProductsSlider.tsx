@@ -202,6 +202,7 @@ function ProductsSlider({ title, ProductsList }: Props) {
                     src={item.node.images.edges[0]?.node?.url}
                     alt={item.node.handle}
                     fill
+                    priority={true}
                     className="object-contain"
                   />
                 </Link>

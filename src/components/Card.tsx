@@ -34,12 +34,13 @@ const Card: FC<ProductCardProps> = ({ item, accessories }) => {
 
   return (
     <Link href={`/yourwatch/${product.handle}`} key={product.handle}>
-      <div className="flex flex-col items-center justify-center gap-4 h-[500px] md:w-[250px] w-[190px] relative">
-        <div className="md:w-[240px] h-[275px] w-[180px] relative">
+      <div className="flex flex-col items-center justify-center gap-4 h-[500px] md:w-[250px] w-[175px] relative">
+        <div className="md:w-[240px] h-[275px] w-[95%] relative">
           <Image
             src={image.url}
             alt={product.title}
             fill={true}
+            priority={true}
             className="bg-[#f2f2f264] object-contain"
           />
         </div>
