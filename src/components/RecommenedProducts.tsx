@@ -134,9 +134,9 @@ function RecommenedProducts({ title, productId }: RecommenedProductsProps) {
 
   const products = data?.productRecommendations;
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   if (error) {
     return (
