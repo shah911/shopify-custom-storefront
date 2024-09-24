@@ -11,7 +11,6 @@ import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { motion } from "framer-motion";
-// import Loader from "./Loader";
 
 type ImageNode = {
   node: {
@@ -52,6 +51,9 @@ function ProductsSlider({ title, ProductsList }: Props) {
   const [desc, setDesc] = useState(false);
   const [maxChars, setMaxChars] = useState(0);
   const [progress, setProgress] = useState(0);
+  const swiperRef = useRef<SwiperRef>(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
 
   useEffect(() => {
     const updateMaxChars = () => {
@@ -81,13 +83,7 @@ function ProductsSlider({ title, ProductsList }: Props) {
 
   const Products = ProductsList?.collections.edges[0].node.products;
 
-  const swiperRef = useRef<SwiperRef>(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-  // const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    // setIsLoading(false);
     const swiperInstance = swiperRef.current?.swiper;
 
     const updateNavButtons = () => {
