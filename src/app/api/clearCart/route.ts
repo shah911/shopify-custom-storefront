@@ -5,7 +5,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json(); // Parse the webhook body
     const { id, email } = body; // Extract relevant info (order id, customer email, etc.)
-    console.log(id, email);
+    console.log(body, id, email);
     // Step 1: Validate the webhook (Shopify can send verification headers, optionally handle that)
     // You can validate the request using Shopify shared secret (optional for now)
 
