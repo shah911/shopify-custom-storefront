@@ -5,8 +5,9 @@ import MegaMenu from "./MegaMenu";
 import MenuIcon from "./MenuIcon";
 import Search from "./Search";
 import Cart from "./Cart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMotionValueEvent, useScroll, motion } from "framer-motion";
+import Cookies from "js-cookie";
 
 function Navbar() {
   const [hidden, setHidden] = useState(false);
@@ -20,6 +21,24 @@ function Navbar() {
       setHidden(false);
     }
   });
+
+  useEffect(() => {
+    // Check if the 'clearCart' cookie is set
+    const clearCartCookie = Cookies.get("clearCart");
+
+    if (clearCartCookie) {
+      // Clear the cart from localStorage
+
+      // Optionally clear other related cart data
+
+      // Remove the 'clearCart' cookie after it's used
+      Cookies.remove("clearCart");
+      window.localStorage.removeItem("shopify-demo-store");
+      window.localStorage.removeItem("shopify-demo-store-cart");
+
+      console.log("Cart cleared after successful checkout.");
+    }
+  }, []);
 
   return (
     <motion.div
