@@ -60,7 +60,7 @@ function MegaMenu() {
     } else {
       setTimeout(() => {
         unlockScroll();
-      }, 1250);
+      }, 1000);
     }
   }, [isOpen, lockScroll, unlockScroll]);
 

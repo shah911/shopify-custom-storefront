@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useInfiniteQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
+import { useSearchParams } from "next/navigation";
 
 type ImageNode = {
   url: string;
@@ -93,15 +94,10 @@ const productQuery = gql`
   }
 `;
 
-type searchParams = {
-  searchParams: {
-    q: string;
-    sortKey: string;
-  };
-};
-
-function ProductCollection({ searchParams }: searchParams) {
-  const { q, sortKey } = searchParams;
+function ProductCollection() {
+  const searchParam = useSearchParams();
+  const q = searchParam.get("q");
+  const sortKey = searchParam.get("sortKey");
 
   const fetchProducts = async ({ pageParam = null }) => {
     const { data, errors } = await storeFront(print(productQuery), {

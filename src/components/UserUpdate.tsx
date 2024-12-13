@@ -7,6 +7,7 @@ import { storeFront } from "../../utils";
 import { CloseOutlined } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
 import Loader from "./Loader";
+import Cookies from "js-cookie";
 
 type FormData = {
   email: string;
@@ -50,9 +51,7 @@ function UserUpdate() {
     setLoading(true);
     //console.log(formData);
     const { email, username } = formData;
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
+    const customerAccessToken = Cookies.get("customer-access-token");
     const { data, errors } = await storeFront(print(customerUpdate), {
       customerAccessToken: customerAccessToken,
       customer: { email: email, lastName: username },

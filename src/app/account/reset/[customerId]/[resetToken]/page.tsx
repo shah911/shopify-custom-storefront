@@ -8,6 +8,7 @@ import { CloseOutlined } from "@mui/icons-material";
 import { AnimatePresence, motion } from "framer-motion";
 import Loader from "@/components/Loader";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 type params = {
   params: {
@@ -68,9 +69,7 @@ function ResetPassword({ params }: params) {
   const [isMounted, setIsMounted] = useState(true);
 
   useEffect(() => {
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
+    const customerAccessToken = Cookies.get("customer-access-token");
 
     if (customerAccessToken) {
       router.push("/account");

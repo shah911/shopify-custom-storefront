@@ -2,12 +2,16 @@
 import { CloseOutlined } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import gql from "graphql-tag";
 import { print } from "graphql";
 import { formatUSD, storeFront } from "../../../utils";
 import Loader from "@/components/Loader";
 import { AnimatePresence, motion } from "framer-motion";
+import Cookies from "js-cookie";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import ErrPage from "@/components/ErrPage";
+import { CartItemsContext } from "@/LockContext/TotalCartIItems";
 
 type ProductVariant = {
   id: string;
@@ -127,62 +131,196 @@ const removeItemFromCart = gql`
   }
 `;
 
+const getCartQuery = gql`
+  query getCart($ID: ID!) {
+    cart(id: $ID) {
+      cost {
+        subtotalAmount {
+          amount
+        }
+        totalTaxAmount {
+          amount
+        }
+        totalAmount {
+          amount
+        }
+      }
+      totalQuantity
+      lines(first: 100) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                product {
+                  title
+                  tags
+                  priceRange {
+                    minVariantPrice {
+                      amount
+                    }
+                  }
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        selectedOptions {
+                          value
+                        }
+                      }
+                    }
+                  }
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const removeAllCartItemsMutation = gql`
+  mutation removeCartLines($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        totalQuantity
+        cost {
+          subtotalAmount {
+            amount
+          }
+          totalAmount {
+            amount
+          }
+        }
+        lines(first: 100) {
+          edges {
+            node {
+              id
+              quantity
+            }
+          }
+        }
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
 function Cart() {
-  const [cart, setCart] = useState<CartData | null>(null);
-  const [checkoutUrl, setCheckoutUrl] = useState();
-  const [loading, setLoading] = useState(true);
   const [removingItem, setRemovingItem] = useState(false);
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [err, setErr] = useState(false);
+  const queryClient = useQueryClient();
+  const { setTotalQuantity } = useContext(CartItemsContext);
 
-  const emptyCart = () => {
-    window.localStorage.removeItem("shopify-demo-store");
-    window.localStorage.removeItem("shopify-demo-store-cart");
-    setCart(null);
-  };
+  const cartId = Cookies.get("cartID");
+  const checkoutUrl = Cookies.get("checkoutUrl");
 
-  useEffect(() => {
-    const cartDataString = window.localStorage.getItem(
-      "shopify-demo-store-cart"
-    );
-    const cartData = cartDataString ? JSON.parse(cartDataString) : null;
-    const cartString = window.localStorage.getItem("shopify-demo-store");
-    const cartInfo = cartString ? JSON.parse(cartString) : null;
-    const url = cartInfo ? cartInfo.cart.checkoutUrl : null;
-    setCheckoutUrl(url);
-    setCart(cartData);
-    setLoading(false);
-  }, []);
-
-  const removeItem = async (id: string) => {
-    setRemovingItem(true);
-    const cartDataStringId = window.localStorage.getItem("shopify-demo-store");
-    const cartDataId = cartDataStringId ? JSON.parse(cartDataStringId) : null;
-    const cartId = cartDataId ? cartDataId.cart.id : null;
-    const { data, errors } = await storeFront(print(removeItemFromCart), {
-      cartId: cartId,
-      cartLineId: id,
+  const fetchProduct = async () => {
+    const { data, errors } = await storeFront(print(getCartQuery), {
+      ID: cartId,
     });
-    if (data) {
-      const newCart = data?.cartLinesRemove?.cart;
-      window.localStorage.setItem(
-        "shopify-demo-store-cart",
-        JSON.stringify(newCart)
-      );
-      setCart(newCart);
-      setRemovingItem(false);
-    } else if (errors) {
-      setErr(true);
-      setErrMsg("something went wrong while removing this cart item");
-      setRemovingItem(false);
-    } else {
-      setErr(true);
-      setErrMsg("something went wrong while removing this cart item");
-      setRemovingItem(false);
+
+    if (errors) {
+      throw new Error("Failed to fetch products");
     }
+
+    return data;
   };
 
-  return loading ? (
+  const { data, isLoading, error } = useQuery("cartItems", fetchProduct);
+
+  const totalCartLineIDs = data?.cart.lines.edges.map(
+    (item: CartItem) => item.node.id
+  );
+
+  const emptyCartMutation = useMutation(
+    async () => {
+      const { data, errors } = await storeFront(
+        print(removeAllCartItemsMutation),
+        {
+          cartId: cartId,
+          lineIds: totalCartLineIDs,
+        }
+      );
+      if (errors || data?.cartLinesRemove?.userErrors.length) {
+        throw new Error(
+          data?.cartLinesRemove?.userErrors[0]?.message ||
+            "Error removing items"
+        );
+      }
+
+      return data?.cartLinesRemove?.cart;
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch the cart query
+        queryClient.invalidateQueries("cartItems");
+        setTotalQuantity(0);
+        setErr(true);
+        setErrMsg("Successfully removed all item from the cart.");
+        setRemovingItem(false);
+      },
+      onError: () => {
+        setErr(true);
+        setErrMsg("Something went wrong while emptying the cart.");
+        setRemovingItem(false);
+      },
+    }
+  );
+
+  const removeItemMutation = useMutation(
+    async (id: string) => {
+      const { data, errors } = await storeFront(print(removeItemFromCart), {
+        cartId: cartId,
+        cartLineId: id,
+      });
+      if (errors || data?.cartLinesRemove?.userErrors.length) {
+        throw new Error(
+          data?.cartLinesRemove?.userErrors[0]?.message ||
+            "Error removing items"
+        );
+      }
+      return data?.cartLinesRemove?.cart;
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch the cart query
+        queryClient.invalidateQueries("cartItems");
+        setTotalQuantity(data?.cartLinesRemove?.cart?.totalQuantity);
+        setErr(true);
+        setErrMsg("Successfully removed item from the cart.");
+        setRemovingItem(false);
+      },
+      onError: () => {
+        setErr(true);
+        setErrMsg("Something went wrong while removing this cart item");
+        setRemovingItem(false);
+      },
+    }
+  );
+
+  const removeItem = (id: string) => {
+    setRemovingItem(true);
+    removeItemMutation.mutate(id);
+  };
+
+  if (error) {
+    return <ErrPage />;
+  }
+
+  return isLoading ? (
     <div className="h-[100vh] flex items-center justify-center">
       <Loader />
     </div>
@@ -213,7 +351,7 @@ function Cart() {
           </motion.div>
         )}
       </AnimatePresence>
-      {cart?.lines?.edges.length! > 0 ? (
+      {data?.cart.lines?.edges.length > 0 ? (
         <div className="lg:h-[auto] flex items-center justify-center py-14">
           <div className="h-[85%] w-[95vw] mx-auto flex flex-col lg:flex-row">
             <div className="flex-[3]">
@@ -222,13 +360,16 @@ function Cart() {
                   my cart
                 </h1>
                 <button
-                  onClick={emptyCart}
+                  onClick={() => {
+                    setRemovingItem(true);
+                    emptyCartMutation.mutate();
+                  }}
                   className="btn-secondary cursor-pointer p-3 border border-black"
                 >
                   empty cart
                 </button>
               </div>
-              {cart?.lines.edges?.map((item, i: number) => (
+              {data?.cart.lines.edges?.map((item: CartItem, i: number) => (
                 <div
                   key={i}
                   className="flex items-center justify-between h-[220px] lg:w-[75%] 2xl:w-[80%] 2xl:h-[300px] w-[100%] my-10"
@@ -268,7 +409,9 @@ function Cart() {
                   </div>
                   <div className="flex-[0.1] md:flex-[1] h-[100%] items-end justify-between flex flex-col">
                     <button
-                      onClick={() => removeItem(item.node.id)}
+                      onClick={() => {
+                        removeItem(item.node.id);
+                      }}
                       className="btn uppercase text-sm font-[500] hidden md:flex"
                     >
                       remove
@@ -293,19 +436,17 @@ function Cart() {
                 </h1>
                 <span className="text-base font-[300]">
                   Sub-Total :{" "}
-                  {cart && formatUSD(cart.cost.subtotalAmount.amount)}
+                  {data.cart && formatUSD(data.cart.cost.subtotalAmount.amount)}
                 </span>
                 <span className="text-base font-[300]">
                   Tax-Amount :{" "}
-                  {cart && formatUSD(cart.cost.totalTaxAmount.amount)}
+                  {data.cart && formatUSD(data.cart.cost.totalTaxAmount.amount)}
                 </span>
                 <span className="text-base font-[300]">
-                  Total : {cart && formatUSD(cart.cost.totalAmount.amount)}
+                  Total :{" "}
+                  {data.cart && formatUSD(data.cart.cost.totalAmount.amount)}
                 </span>
-                <Link
-                  // href={`${customerToken ? checkoutLink : "/myaccount"}`}
-                  href={`${checkoutUrl}`}
-                >
+                <Link href={`${checkoutUrl}`}>
                   <button className="btn-secondary uppercase border border-gray-400 text-lg px-6 py-2">
                     checkout
                   </button>

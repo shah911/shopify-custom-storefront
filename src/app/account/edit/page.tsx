@@ -4,15 +4,14 @@ import User from "@/components/User";
 import UserUpdate from "@/components/UserUpdate";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 function Edit() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
+    const customerAccessToken = Cookies.get("customer-access-token");
 
     if (!customerAccessToken) {
       router.push("/account/signin");

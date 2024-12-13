@@ -1,7 +1,7 @@
 "use client";
 import RecommenedProducts from "@/components/RecommenedProducts";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import gql from "graphql-tag";
 import { print } from "graphql";
 import { formatUSD, storeFront } from "../../../../utils";
@@ -10,6 +10,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import ErrPage from "@/components/ErrPage";
 import { CloseOutlined } from "@mui/icons-material";
 import { useQuery } from "react-query";
+import Cookies from "js-cookie";
+import { CartItemsContext } from "@/LockContext/TotalCartIItems";
 
 type ImageNode = {
   url: string;
@@ -110,21 +112,6 @@ const singleProductQuery = gql`
   }
 `;
 
-const createCartInstance = gql`
-  mutation cartCreate {
-    cartCreate {
-      cart {
-        id
-        checkoutUrl
-      }
-      userErrors {
-        field
-        message
-      }
-    }
-  }
-`;
-
 const addToCartMutation = gql`
   mutation cartLinesAdd($cartId: ID!, $variantId: ID!) {
     cartLinesAdd(
@@ -220,9 +207,9 @@ function YourWatch({ params }: YourWatchProps) {
 
   const [selectedImg, setSelectedImg] = useState(0);
   const [addingItem, setAddingItem] = useState(false);
-  const [cart, setCart] = useState();
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [err, setErr] = useState(false);
+  const { setTotalQuantity } = useContext(CartItemsContext);
 
   const fetchProduct = async () => {
     const { data, errors } = await storeFront(print(singleProductQuery), {
@@ -244,38 +231,9 @@ function YourWatch({ params }: YourWatchProps) {
   const variantId = singleProduct?.variants.edges[0].node.id;
   const productId = data?.product?.id;
 
-  useEffect(() => {
-    async function getCart() {
-      let localCartData = JSON.parse(
-        window.localStorage.getItem("shopify-demo-store") || "{}"
-      );
-      // Check if cart data exists
-      if (localCartData && localCartData.cart && localCartData.cart.id) {
-        // Load the existing cart
-        setCart(localCartData);
-      } else {
-        // Create a new cart instance if there is no existing cart
-        const { data, errors } = await storeFront(print(createCartInstance));
-        if (errors) {
-          setErr(true);
-          setErrMsg("something went wrong while creating a cart instance");
-        }
-        localCartData = data?.cartCreate;
-        setCart(localCartData);
-        window.localStorage.setItem(
-          "shopify-demo-store",
-          JSON.stringify(localCartData)
-        );
-      }
-    }
-    getCart();
-  }, []);
-
   const handleAddToCart = async () => {
-    // Retrieve the cart data from localStorage
-    const cartDataString = window.localStorage.getItem("shopify-demo-store");
-    const cartData = cartDataString ? JSON.parse(cartDataString) : null;
-    const cartId = cartData ? cartData.cart.id : null;
+    // Retrieve the cart data from cookies
+    const cartId = Cookies.get("cartID");
     setAddingItem(true);
     const { data, errors } = await storeFront(print(addToCartMutation), {
       cartId: cartId,
@@ -288,14 +246,9 @@ function YourWatch({ params }: YourWatchProps) {
     }
 
     if (data && data.cartLinesAdd) {
-      // Update localStorage with the new cart data
-      window.localStorage.setItem(
-        "shopify-demo-store-cart",
-        JSON.stringify(data.cartLinesAdd.cart)
-      );
-
-      // Update the cart state with the new cart data
-      setCart(data.cartLinesAdd.cart);
+      setTotalQuantity(data.cartLinesAdd?.cart.totalQuantity);
+      setErr(true);
+      setErrMsg("successfully added item to the cart");
     } else {
       setErr(true);
       setErrMsg("something went wrong while adding this item to the cart");

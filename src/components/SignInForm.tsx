@@ -7,6 +7,7 @@ import { storeFront } from "../../utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
+import Cookies from "js-cookie";
 
 type FormData = {
   email: string;
@@ -39,9 +40,7 @@ function SignInForm() {
   const router = useRouter();
 
   useEffect(() => {
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
+    const customerAccessToken = Cookies.get("customer-access-token");
 
     if (customerAccessToken) {
       router.push("/account");
@@ -70,9 +69,10 @@ function SignInForm() {
       );
       setLoading(false);
     } else if (data?.customerAccessTokenCreate?.customerAccessToken) {
-      window.localStorage.setItem(
+      Cookies.set(
         "customer-access-token",
-        JSON.stringify(data.customerAccessTokenCreate.customerAccessToken)
+        data.customerAccessTokenCreate.customerAccessToken?.accessToken,
+        { expires: 7 }
       );
       router.push("/account");
       setLoading(false);

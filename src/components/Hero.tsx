@@ -96,7 +96,7 @@ function Hero() {
     }, 6000);
 
     return () => clearInterval(interval);
-  }, [play]);
+  }, [play, activeIndex]);
 
   return (
     <div className="overflow-hidden">

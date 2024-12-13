@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import Loader from "./Loader";
+import Cookies from "js-cookie";
 
 const data = [
   {
@@ -50,16 +51,16 @@ function User() {
   const [loading, setLoading] = useState(false);
   const handleLogout = async () => {
     setLoading(true);
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
+    const customerAccessToken = Cookies.get("customer-access-token");
     //console.log(customerAccessToken);
-    const { data, errors } = await storeFront(print(customerLogout), {
+    await storeFront(print(customerLogout), {
       customerAccessToken: customerAccessToken,
     });
-    window.localStorage.removeItem("customer-access-token");
+
+    Cookies.remove("customer-access-token");
+
     setLoading(false);
-    //console.log(data);
+
     router.push("/");
   };
   return (

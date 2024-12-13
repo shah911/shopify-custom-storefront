@@ -7,6 +7,7 @@ import { print } from "graphql";
 import { storeFront } from "../../utils";
 import { useRouter } from "next/navigation";
 import Loader from "./Loader";
+import Cookies from "js-cookie";
 
 type FormData = {
   email: string;
@@ -45,13 +46,6 @@ const CustomerAccessToken = gql`
 `;
 
 function SignUpForm() {
-  useEffect(() => {
-    const customerData = window.localStorage.getItem("customer-access-token");
-    if (customerData) {
-      router.push("/");
-    }
-  }, []);
-
   const {
     register,
     handleSubmit,
@@ -59,14 +53,11 @@ function SignUpForm() {
   } = useForm<FormData>();
   const [errorMsg, setErrorMsg] = useState<undefined | string>();
   const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
   const router = useRouter();
 
-  const [isMounted, setIsMounted] = useState(true);
-
   useEffect(() => {
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
+    const customerAccessToken = Cookies.get("customer-access-token");
 
     if (customerAccessToken) {
       router.push("/account");
@@ -96,11 +87,12 @@ function SignUpForm() {
         },
       });
       if (data) {
-        window.localStorage.setItem(
+        Cookies.set(
           "customer-access-token",
-          JSON.stringify(data.customerAccessTokenCreate.customerAccessToken)
+          data?.customerAccessTokenCreate?.customerAccessToken,
+          { expires: 7 }
         );
-        //console.log(res.data.customerAccessTokenCreate.customerAccessToken);
+
         router.push("/");
       } else if (errors) {
         setErrorMsg(

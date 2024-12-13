@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import NewsLetter from "@/components/NewsLetter";
 import { ScrollLockProvider } from "@/LockContext/LockContext";
 import Query from "@/components/Query";
+import { CartItemsProvider } from "@/LockContext/TotalCartIItems";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,12 +27,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <ScrollLockProvider>
-          <Query>
-            <Navbar />
-            {children}
-            <NewsLetter />
-            <Footer />
-          </Query>
+          <CartItemsProvider>
+            <Query>
+              <Navbar />
+              {children}
+              <NewsLetter />
+              <Footer />
+            </Query>
+          </CartItemsProvider>
         </ScrollLockProvider>
       </body>
     </html>

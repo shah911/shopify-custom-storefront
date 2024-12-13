@@ -8,6 +8,9 @@ import { print } from "graphql";
 import Loader from "./Loader";
 import { CloseOutlined } from "@mui/icons-material";
 import { AnimatePresence, motion } from "framer-motion";
+import Cookies from "js-cookie";
+import { useQuery } from "react-query";
+import ErrPage from "./ErrPage";
 
 type FormData = {
   streetAddress: string;
@@ -61,37 +64,33 @@ const getCustomerId = gql`
 
 function AddressForm() {
   const [value, setValue] = useState("United States");
-  const [customerToken, setCustomerToken] = useState();
-  const [customerId, setCustomerId] = useState();
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<undefined | string>();
   const [popUp, setPopUp] = useState(false);
   //console.log(customerId);
   //console.log(customerToken);
-  useEffect(() => {
-    const getCustomerInfo = async () => {
-      const customer = window.localStorage.getItem("customer-access-token");
-      const customerData = customer ? JSON.parse(customer) : null;
-      const customerAccessToken = customerData
-        ? customerData.accessToken
-        : null;
-      setCustomerToken(customerAccessToken);
-      const { data, errors } = await storeFront(print(getCustomerId), {
-        customerAccessToken: customerAccessToken,
-      });
-      //console.log(data);
-      setCustomerId(data?.customer?.addresses?.edges[0]?.node?.id);
-      if (errors) {
-        setPopUp(true);
-        setMsg(
-          errors
-            ? errors[0].message
-            : "We were unable to retrieve your customer record."
-        );
-      }
-    };
-    getCustomerInfo();
-  }, []);
+  const customerAccessToken = Cookies.get("customer-access-token");
+
+  const getCustomerInfo = async () => {
+    const { data, errors } = await storeFront(print(getCustomerId), {
+      customerAccessToken: customerAccessToken,
+    });
+    //console.log(data);
+
+    if (errors) {
+      setPopUp(true);
+      setMsg(
+        errors
+          ? errors[0].message
+          : "We were unable to retrieve your customer record."
+      );
+    }
+    return data;
+  };
+
+  const { data, error, isLoading } = useQuery("customerID", getCustomerInfo);
+  const customerID = data?.customer?.addresses?.edges[0]?.node?.id;
+
   const {
     register,
     handleSubmit,
@@ -101,11 +100,11 @@ function AddressForm() {
   const onSubmit = async (formData: FormData) => {
     //console.log(formData);
     const { streetAddress, homeAddress, city, country, zip } = formData;
-    if (customerId) {
+    if (customerID) {
       setLoading(true);
       const { data, errors } = await storeFront(print(customerAddress), {
-        id: customerId,
-        customerAccessToken: customerToken,
+        id: customerID,
+        customerAccessToken: customerAccessToken,
         address: {
           address1: streetAddress,
           address2: homeAddress,
@@ -128,15 +127,23 @@ function AddressForm() {
         setMsg("Your shipping address has been successfully updated");
       }
       setLoading(false);
-    } else {
-      setPopUp(true);
-      setMsg("We were unable to retrieve your customer record.");
-      setLoading(false);
     }
 
     //console.log(data, errors);
     //console.log(errors);
   };
+
+  if (error) {
+    return <ErrPage />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center relative">

@@ -5,13 +5,14 @@ import MegaMenu from "./MegaMenu";
 import MenuIcon from "./MenuIcon";
 import Search from "./Search";
 import Cart from "./Cart";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMotionValueEvent, useScroll, motion } from "framer-motion";
 import Cookies from "js-cookie";
 
 function Navbar() {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
+  const customerAccessToken = Cookies.get("customer-access-token");
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious();
@@ -21,24 +22,6 @@ function Navbar() {
       setHidden(false);
     }
   });
-
-  useEffect(() => {
-    // Check if the 'clearCart' cookie is set
-    const clearCartCookie = Cookies.get("clearCart");
-
-    if (clearCartCookie) {
-      // Clear the cart from localStorage
-
-      // Optionally clear other related cart data
-
-      // Remove the 'clearCart' cookie after it's used
-      Cookies.remove("clearCart");
-      window.localStorage.removeItem("shopify-demo-store");
-      window.localStorage.removeItem("shopify-demo-store-cart");
-
-      console.log("Cart cleared after successful checkout.");
-    }
-  }, []);
 
   return (
     <motion.div
@@ -65,7 +48,10 @@ function Navbar() {
           </div>
           <div className="flex-[1] flex items-center justify-end gap-4">
             <Search />
-            <Link href="/account" className="hidden lg:flex">
+            <Link
+              href={customerAccessToken ? "/account" : "/account/signin"}
+              className="hidden lg:flex"
+            >
               <Image
                 src="/user.svg"
                 alt="user"

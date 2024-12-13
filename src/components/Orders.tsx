@@ -7,6 +7,7 @@ import Loader from "./Loader";
 import ErrPage from "./ErrPage";
 import { useInfiniteQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
+import Cookies from "js-cookie";
 
 type OrderVariantImage = {
   url: string;
@@ -82,10 +83,9 @@ const customerOrders = gql`
 `;
 
 function Orders() {
+  const customerAccessToken = Cookies.get("customer-access-token");
+
   const fetchOrders = async ({ pageParam = null }) => {
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
     const { data, errors } = await storeFront(print(customerOrders), {
       accessToken: customerAccessToken,
       cursor: pageParam,
@@ -111,6 +111,8 @@ function Orders() {
       lastPage?.customer?.orders?.pageInfo.endCursor,
     staleTime: 6000,
   });
+
+  // console.log(data);
 
   const { ref, inView } = useInView({
     threshold: 1,

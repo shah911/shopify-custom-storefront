@@ -8,6 +8,7 @@ import Loader from "@/components/Loader";
 import { AnimatePresence, motion } from "framer-motion";
 import { storeFront } from "../../../../utils";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 type FormData = {
   email: string;
@@ -57,9 +58,7 @@ function forgotPassword() {
   const [isMounted, setIsMounted] = useState(true);
 
   useEffect(() => {
-    const customer = window.localStorage.getItem("customer-access-token");
-    const customerData = customer ? JSON.parse(customer) : null;
-    const customerAccessToken = customerData ? customerData.accessToken : null;
+    const customerAccessToken = Cookies.get("customer-access-token");
 
     if (customerAccessToken) {
       router.push("/account");
@@ -75,7 +74,7 @@ function forgotPassword() {
     const { data, errors } = await storeFront(print(customerRecovery), {
       email: email,
     });
-    console.log(data, errors);
+    // console.log(data, errors);
     if (errors) {
       setErrMsg(
         errors[0].message
