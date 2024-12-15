@@ -404,17 +404,16 @@ function Cart() {
                   {data?.cart?.cost?.totalAmount?.currencyCode}
                 </span>
 
-                <button
-                  onClick={() => {
-                    console.log("clicked");
-                    console.log(checkoutUrl);
-                    console.log("used router.replace");
-                    router.replace(checkoutUrl || "");
-                  }}
-                  className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
-                >
-                  checkout
-                </button>
+                {checkoutUrl && (
+                  <button
+                    onClick={() => {
+                      router.push(checkoutUrl);
+                    }}
+                    className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
+                  >
+                    checkout
+                  </button>
+                )}
               </div>
             </div>
           </div>
