@@ -405,7 +405,10 @@ function Cart() {
                 </span>
 
                 <button
-                  onClick={() => router.push(checkoutUrl || "")}
+                  onClick={() => {
+                    console.log("clicked");
+                    router.push(checkoutUrl || "");
+                  }}
                   className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
                 >
                   checkout
