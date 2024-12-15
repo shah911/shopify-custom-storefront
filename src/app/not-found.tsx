@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-function notFound() {
+function NotFound() {
   return (
     <div className="h-[768px] md:h-[900px] lg:h-[600px] 2xl:h-[768px] 4xl:h-[960px] lg:flex-row flex flex-col items-center justify-center">
       <div className="flex-[3] lg:flex-[1] h-[100%] w-[100%] relative">
@@ -35,4 +35,4 @@ function notFound() {
   );
 }
 
-export default notFound;
+export default NotFound;

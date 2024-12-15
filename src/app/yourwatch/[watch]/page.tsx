@@ -12,6 +12,7 @@ import { CloseOutlined } from "@mui/icons-material";
 import { useMutation, useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { CartItemsContext } from "@/LockContext/TotalCartIItems";
+import NotFound from "@/app/not-found";
 
 type ImageNode = {
   url: string;
@@ -177,7 +178,7 @@ function YourWatch({ params }: YourWatchProps) {
     return data;
   };
 
-  const { data, isLoading, error } = useQuery(watch, fetchProduct, {
+  const { data, isLoading, error } = useQuery("singleProduct", fetchProduct, {
     staleTime: 60000,
   });
 
@@ -229,6 +230,10 @@ function YourWatch({ params }: YourWatchProps) {
 
   if (error) {
     return <ErrPage />;
+  }
+
+  if (!singleProduct) {
+    return <NotFound />;
   }
 
   return (

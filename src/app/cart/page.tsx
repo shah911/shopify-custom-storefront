@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import ErrPage from "@/components/ErrPage";
 import { CartItemsContext } from "@/LockContext/TotalCartIItems";
+import { useRouter } from "next/navigation";
 
 type ProductVariant = {
   id: string;
@@ -175,6 +176,7 @@ function Cart() {
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [err, setErr] = useState(false);
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { setTotalQuantity } = useContext(CartItemsContext);
 
   const cartId = Cookies.get("cartID");
@@ -401,11 +403,13 @@ function Cart() {
                   {formatToCurrency(data?.cart?.cost?.totalAmount?.amount)}{" "}
                   {data?.cart?.cost?.totalAmount?.currencyCode}
                 </span>
-                <Link href={`${checkoutUrl}`}>
-                  <button className="btn-secondary uppercase border border-gray-400 text-lg px-6 py-2">
-                    checkout
-                  </button>
-                </Link>
+
+                <button
+                  onClick={() => router.push(checkoutUrl!)}
+                  className="btn-secondary uppercase border border-gray-400 text-lg px-6 py-2"
+                >
+                  checkout
+                </button>
               </div>
             </div>
           </div>
