@@ -404,17 +404,17 @@ function Cart() {
                   {data?.cart?.cost?.totalAmount?.currencyCode}
                 </span>
 
-                {checkoutUrl && (
-                  <button
-                    onClick={() => {
-                      console.log("using router.prefetch");
-                      router.prefetch(checkoutUrl);
-                    }}
-                    className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
-                  >
-                    checkout
-                  </button>
-                )}
+                {/* {checkoutUrl && ( */}
+                <a
+                  href={checkoutUrl}
+                  // onClick={() => {
+                  //   router.push(checkoutUrl);
+                  // }}
+                  className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
+                >
+                  checkout
+                </a>
+                {/* )} */}
               </div>
             </div>
           </div>
