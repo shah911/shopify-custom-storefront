@@ -407,11 +407,12 @@ function Cart() {
                 {checkoutUrl && (
                   <button
                     onClick={() => {
-                      router.push(checkoutUrl);
+                      console.log("using router.prefetch");
+                      router.prefetch(checkoutUrl);
                     }}
                     className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
                   >
-                    {<Link href={checkoutUrl}>checkout</Link>}
+                    checkout
                   </button>
                 )}
               </div>
