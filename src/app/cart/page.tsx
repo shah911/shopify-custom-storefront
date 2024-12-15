@@ -403,13 +403,6 @@ function Cart() {
                   {formatToCurrency(data?.cart?.cost?.totalAmount?.amount)}{" "}
                   {data?.cart?.cost?.totalAmount?.currencyCode}
                 </span>
-
-                {/* <a
-                  href={checkoutUrl}
-                  className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2 text-center"
-                >
-                  checkout
-                </a> */}
                 {checkoutUrl && (
                   <button
                     onClick={() => (window.location.href = checkoutUrl)}
