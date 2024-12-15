@@ -178,7 +178,7 @@ function YourWatch({ params }: YourWatchProps) {
     return data;
   };
 
-  const { data, isLoading, error } = useQuery("singleProduct", fetchProduct, {
+  const { data, isLoading, error } = useQuery(watch, fetchProduct, {
     staleTime: 60000,
   });
 

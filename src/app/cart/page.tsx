@@ -12,7 +12,7 @@ import Cookies from "js-cookie";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import ErrPage from "@/components/ErrPage";
 import { CartItemsContext } from "@/LockContext/TotalCartIItems";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 type ProductVariant = {
   id: string;
@@ -405,8 +405,8 @@ function Cart() {
                 </span>
 
                 <button
-                  onClick={() => router.push(checkoutUrl!)}
-                  className="btn-secondary uppercase border border-gray-400 text-lg px-6 py-2"
+                  onClick={() => router.push(checkoutUrl || "")}
+                  className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
                 >
                   checkout
                 </button>
