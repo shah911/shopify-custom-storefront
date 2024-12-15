@@ -411,7 +411,7 @@ function Cart() {
                     }}
                     className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
                   >
-                    checkout
+                    {<Link href={checkoutUrl}>checkout</Link>}
                   </button>
                 )}
               </div>
