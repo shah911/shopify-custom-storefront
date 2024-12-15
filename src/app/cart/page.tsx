@@ -404,17 +404,20 @@ function Cart() {
                   {data?.cart?.cost?.totalAmount?.currencyCode}
                 </span>
 
-                {/* {checkoutUrl && ( */}
-                <a
+                {/* <a
                   href={checkoutUrl}
-                  // onClick={() => {
-                  //   router.push(checkoutUrl);
-                  // }}
-                  className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
+                  className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2 text-center"
                 >
                   checkout
-                </a>
-                {/* )} */}
+                </a> */}
+                {checkoutUrl && (
+                  <button
+                    onClick={() => (window.location.href = checkoutUrl)}
+                    className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2 text-center"
+                  >
+                    checkout
+                  </button>
+                )}
               </div>
             </div>
           </div>
