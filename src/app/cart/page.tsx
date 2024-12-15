@@ -408,7 +408,8 @@ function Cart() {
                   onClick={() => {
                     console.log("clicked");
                     console.log(checkoutUrl);
-                    router.push(checkoutUrl || "");
+                    console.log("used router.replace");
+                    router.replace(checkoutUrl || "");
                   }}
                   className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2"
                 >
