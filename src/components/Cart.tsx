@@ -27,55 +27,7 @@ const createCartInstance = gql`
 const getCartQuery = gql`
   query getCart($ID: ID!) {
     cart(id: $ID) {
-      cost {
-        subtotalAmount {
-          amount
-        }
-        totalTaxAmount {
-          amount
-        }
-        totalAmount {
-          amount
-        }
-      }
       totalQuantity
-      lines(first: 100) {
-        edges {
-          node {
-            id
-            quantity
-            merchandise {
-              ... on ProductVariant {
-                product {
-                  title
-                  tags
-                  priceRange {
-                    minVariantPrice {
-                      amount
-                    }
-                  }
-                  variants(first: 1) {
-                    edges {
-                      node {
-                        selectedOptions {
-                          value
-                        }
-                      }
-                    }
-                  }
-                  images(first: 1) {
-                    edges {
-                      node {
-                        url
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
 `;

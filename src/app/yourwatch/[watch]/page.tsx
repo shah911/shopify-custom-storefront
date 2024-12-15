@@ -1,15 +1,15 @@
 "use client";
 import RecommenedProducts from "@/components/RecommenedProducts";
 import Image from "next/image";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import gql from "graphql-tag";
 import { print } from "graphql";
-import { formatUSD, storeFront } from "../../../../utils";
+import { formatToCurrency, storeFront } from "../../../../utils";
 import Loader from "@/components/Loader";
 import { motion, AnimatePresence } from "framer-motion";
 import ErrPage from "@/components/ErrPage";
 import { CloseOutlined } from "@mui/icons-material";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import Cookies from "js-cookie";
 import { CartItemsContext } from "@/LockContext/TotalCartIItems";
 
@@ -36,6 +36,7 @@ type VariantEdge = {
 
 type MinVariantPrice = {
   amount: string;
+  currencyCode: string;
 };
 
 type PriceRange = {
@@ -105,6 +106,7 @@ const singleProductQuery = gql`
       priceRange {
         minVariantPrice {
           amount
+          currencyCode
         }
       }
       descriptionHtml
@@ -119,55 +121,7 @@ const addToCartMutation = gql`
       lines: [{ quantity: 1, merchandiseId: $variantId }]
     ) {
       cart {
-        cost {
-          subtotalAmount {
-            amount
-          }
-          totalTaxAmount {
-            amount
-          }
-          totalAmount {
-            amount
-          }
-        }
         totalQuantity
-        lines(first: 100) {
-          edges {
-            node {
-              id
-              quantity
-              merchandise {
-                ... on ProductVariant {
-                  product {
-                    title
-                    tags
-                    priceRange {
-                      minVariantPrice {
-                        amount
-                      }
-                    }
-                    variants(first: 1) {
-                      edges {
-                        node {
-                          selectedOptions {
-                            value
-                          }
-                        }
-                      }
-                    }
-                    images(first: 1) {
-                      edges {
-                        node {
-                          url
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
       }
       userErrors {
         field
@@ -231,30 +185,39 @@ function YourWatch({ params }: YourWatchProps) {
   const variantId = singleProduct?.variants.edges[0].node.id;
   const productId = data?.product?.id;
 
-  const handleAddToCart = async () => {
-    // Retrieve the cart data from cookies
-    const cartId = Cookies.get("cartID");
-    setAddingItem(true);
-    const { data, errors } = await storeFront(print(addToCartMutation), {
-      cartId: cartId,
-      variantId: variantId,
-    });
+  // Retrieve the cart data from cookies
+  const cartId = Cookies.get("cartID");
 
-    if (errors) {
-      setErr(true);
-      setErrMsg("something went wrong while adding this item to the cart");
-    }
+  const AddToCart = useMutation(
+    async () => {
+      const { data, errors } = await storeFront(print(addToCartMutation), {
+        cartId: cartId,
+        variantId: variantId,
+      });
 
-    if (data && data.cartLinesAdd) {
-      setTotalQuantity(data.cartLinesAdd?.cart.totalQuantity);
-      setErr(true);
-      setErrMsg("successfully added item to the cart");
-    } else {
-      setErr(true);
-      setErrMsg("something went wrong while adding this item to the cart");
+      if (errors || data?.cartLinesAdd?.userErrors.length) {
+        throw new Error(
+          data?.cartLinesAdd?.userErrors[0]?.message ||
+            "something went wrong while adding this item to the cart"
+        );
+      }
+
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        setTotalQuantity(data?.cartLinesAdd?.cart?.totalQuantity);
+        setErr(true);
+        setErrMsg("successfully added item to the cart");
+        setAddingItem(false);
+      },
+      onError: () => {
+        setErr(true);
+        setErrMsg("something went wrong while adding this item to the cart");
+        setAddingItem(false);
+      },
     }
-    setAddingItem(false);
-  };
+  );
 
   if (isLoading) {
     return (
@@ -330,7 +293,7 @@ function YourWatch({ params }: YourWatchProps) {
                       exit="exit"
                     >
                       <Image
-                        src={img.node.url || ""}
+                        src={img.node.url}
                         alt=""
                         fill
                         priority={true}
@@ -374,13 +337,21 @@ function YourWatch({ params }: YourWatchProps) {
                   <hr className="border-[#8888887d]" />
                 </div>
               )}
-              <span className="text-[#d80032] font-[500] py-4 text-lg">
-                {formatUSD(
-                  Number(singleProduct?.priceRange.minVariantPrice.amount)
-                )}
-              </span>
+              <div className="py-4 flex gap-1 text-[#d80032] font-[500]  text-lg">
+                <span>
+                  {formatToCurrency(
+                    Number(singleProduct?.priceRange.minVariantPrice.amount)
+                  )}
+                </span>
+                <span>
+                  {singleProduct?.priceRange.minVariantPrice.currencyCode}
+                </span>
+              </div>
               <button
-                onClick={handleAddToCart}
+                onClick={() => {
+                  setAddingItem(true);
+                  AddToCart.mutate();
+                }}
                 className="btn-secondary uppercase min-w-full min-h-[50px] font-[500] tracking-[5px] border border-gray-400 bg-white"
               >
                 {addingItem ? (

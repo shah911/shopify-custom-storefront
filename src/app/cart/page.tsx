@@ -2,10 +2,10 @@
 import { CloseOutlined } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import gql from "graphql-tag";
 import { print } from "graphql";
-import { formatUSD, storeFront } from "../../../utils";
+import { formatToCurrency, storeFront } from "../../../utils";
 import Loader from "@/components/Loader";
 import { AnimatePresence, motion } from "framer-motion";
 import Cookies from "js-cookie";
@@ -45,6 +45,7 @@ type CartItem = {
         priceRange: {
           minVariantPrice: {
             amount: number;
+            currencyCode: string;
           };
         };
       };
@@ -73,55 +74,7 @@ const removeItemFromCart = gql`
   mutation removeCartLines($cartId: ID!, $cartLineId: ID!) {
     cartLinesRemove(cartId: $cartId, lineIds: [$cartLineId]) {
       cart {
-        cost {
-          subtotalAmount {
-            amount
-          }
-          totalTaxAmount {
-            amount
-          }
-          totalAmount {
-            amount
-          }
-        }
         totalQuantity
-        lines(first: 100) {
-          edges {
-            node {
-              id
-              quantity
-              merchandise {
-                ... on ProductVariant {
-                  product {
-                    title
-                    tags
-                    priceRange {
-                      minVariantPrice {
-                        amount
-                      }
-                    }
-                    variants(first: 1) {
-                      edges {
-                        node {
-                          selectedOptions {
-                            value
-                          }
-                        }
-                      }
-                    }
-                    images(first: 1) {
-                      edges {
-                        node {
-                          url
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
       }
       userErrors {
         field
@@ -137,12 +90,11 @@ const getCartQuery = gql`
       cost {
         subtotalAmount {
           amount
-        }
-        totalTaxAmount {
-          amount
+          currencyCode
         }
         totalAmount {
           amount
+          currencyCode
         }
       }
       totalQuantity
@@ -159,6 +111,7 @@ const getCartQuery = gql`
                   priceRange {
                     minVariantPrice {
                       amount
+                      currencyCode
                     }
                   }
                   variants(first: 1) {
@@ -261,7 +214,7 @@ function Cart() {
         );
       }
 
-      return data?.cartLinesRemove?.cart;
+      return data;
     },
     {
       onSuccess: () => {
@@ -292,10 +245,10 @@ function Cart() {
             "Error removing items"
         );
       }
-      return data?.cartLinesRemove?.cart;
+      return data;
     },
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         // Invalidate and refetch the cart query
         queryClient.invalidateQueries("cartItems");
         setTotalQuantity(data?.cartLinesRemove?.cart?.totalQuantity);
@@ -401,10 +354,14 @@ function Cart() {
                       )
                     )}
                     <span className="text-xs md:text-sm font-bold">
-                      {formatUSD(
+                      {formatToCurrency(
                         item.node.merchandise.product.priceRange.minVariantPrice
                           .amount
-                      )}
+                      )}{" "}
+                      {
+                        item.node.merchandise.product.priceRange.minVariantPrice
+                          .currencyCode
+                      }
                     </span>
                   </div>
                   <div className="flex-[0.1] md:flex-[1] h-[100%] items-end justify-between flex flex-col">
@@ -436,15 +393,13 @@ function Cart() {
                 </h1>
                 <span className="text-base font-[300]">
                   Sub-Total :{" "}
-                  {data.cart && formatUSD(data.cart.cost.subtotalAmount.amount)}
-                </span>
-                <span className="text-base font-[300]">
-                  Tax-Amount :{" "}
-                  {data.cart && formatUSD(data.cart.cost.totalTaxAmount.amount)}
+                  {formatToCurrency(data?.cart?.cost?.subtotalAmount?.amount)}{" "}
+                  {data?.cart?.cost?.subtotalAmount?.currencyCode}
                 </span>
                 <span className="text-base font-[300]">
                   Total :{" "}
-                  {data.cart && formatUSD(data.cart.cost.totalAmount.amount)}
+                  {formatToCurrency(data?.cart?.cost?.totalAmount?.amount)}{" "}
+                  {data?.cart?.cost?.totalAmount?.currencyCode}
                 </span>
                 <Link href={`${checkoutUrl}`}>
                   <button className="btn-secondary uppercase border border-gray-400 text-lg px-6 py-2">

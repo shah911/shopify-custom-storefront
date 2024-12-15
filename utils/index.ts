@@ -32,3 +32,19 @@ export function readableDate(isoString: string) {
   const date = new Date(isoString);
   return date.toISOString().split("T")[0];
 }
+
+export function formatToCurrency(num: number) {
+  // Convert the number to a string and split into integer and decimal parts
+  const [integerPart, decimalPart] = num.toString().split(".");
+
+  // Format the integer part with commas
+  const formattedIntegerPart = integerPart.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ","
+  );
+
+  // Return the formatted number, appending the decimal part if it exists
+  return decimalPart
+    ? `${formattedIntegerPart}.${decimalPart}`
+    : formattedIntegerPart;
+}
