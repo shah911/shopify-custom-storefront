@@ -12,7 +12,6 @@ import Cookies from "js-cookie";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import ErrPage from "@/components/ErrPage";
 import { CartItemsContext } from "@/LockContext/TotalCartIItems";
-import { useRouter } from "next/navigation";
 
 type ProductVariant = {
   id: string;
@@ -50,23 +49,6 @@ type CartItem = {
           };
         };
       };
-    };
-  };
-};
-
-type CartData = {
-  lines: {
-    edges: CartItem[];
-  };
-  cost: {
-    subtotalAmount: {
-      amount: number;
-    };
-    totalTaxAmount: {
-      amount: number;
-    };
-    totalAmount: {
-      amount: number;
     };
   };
 };
@@ -171,12 +153,47 @@ const removeAllCartItemsMutation = gql`
   }
 `;
 
+// const UpdateCartMutation = gql`
+//   mutation updateCartLines($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+//     cartLinesUpdate(cartId: $cartId, lines: $lines) {
+//       userErrors {
+//         code
+//         field
+//         message
+//       }
+//       cart {
+//         id
+//         lines(first: 5) {
+//           edges {
+//             node {
+//               id
+//               quantity
+//               attributes {
+//                 key
+//                 value
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// `;
+//for UpdateCartMutation
+// {
+//   "cartId": "",
+//   "lines":
+//       {
+//         "quantity": 2,
+//         "id": ""
+//       }
+// }
+
 function Cart() {
   const [removingItem, setRemovingItem] = useState(false);
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [err, setErr] = useState(false);
   const queryClient = useQueryClient();
-  const router = useRouter();
   const { setTotalQuantity } = useContext(CartItemsContext);
 
   const cartId = Cookies.get("cartID");
