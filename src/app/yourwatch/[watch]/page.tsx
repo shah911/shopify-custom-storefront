@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useContext } from "react";
 import gql from "graphql-tag";
 import { print } from "graphql";
-import { formatToCurrency, storeFront } from "../../../../utils";
+import { formatCurrency, storeFront } from "../../../../utils";
 import Loader from "@/components/Loader";
 import { motion, AnimatePresence } from "framer-motion";
 import ErrPage from "@/components/ErrPage";
@@ -342,16 +342,14 @@ function YourWatch({ params }: YourWatchProps) {
                   <hr className="border-[#8888887d]" />
                 </div>
               )}
-              <div className="py-4 flex gap-1 text-[#d80032] font-[500]  text-lg">
-                <span>
-                  {formatToCurrency(
-                    Number(singleProduct?.priceRange.minVariantPrice.amount)
-                  )}
-                </span>
-                <span>
-                  {singleProduct?.priceRange.minVariantPrice.currencyCode}
-                </span>
-              </div>
+
+              <span className="py-4 flex gap-1 text-[#d80032] font-[500]  text-lg">
+                {formatCurrency(
+                  Number(singleProduct?.priceRange.minVariantPrice.amount),
+                  singleProduct?.priceRange.minVariantPrice.currencyCode
+                )}
+              </span>
+
               <button
                 onClick={() => {
                   setAddingItem(true);

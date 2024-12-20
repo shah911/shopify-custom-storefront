@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useContext, useState } from "react";
 import gql from "graphql-tag";
 import { print } from "graphql";
-import { formatToCurrency, storeFront } from "../../../utils";
+import { formatCurrency, storeFront } from "../../../utils";
 import Loader from "@/components/Loader";
 import { AnimatePresence, motion } from "framer-motion";
 import Cookies from "js-cookie";
@@ -373,14 +373,12 @@ function Cart() {
                       )
                     )}
                     <span className="text-xs md:text-sm font-bold">
-                      {formatToCurrency(
+                      {formatCurrency(
                         item.node.merchandise.product.priceRange.minVariantPrice
-                          .amount
-                      )}{" "}
-                      {
+                          .amount,
                         item.node.merchandise.product.priceRange.minVariantPrice
                           .currencyCode
-                      }
+                      )}
                     </span>
                   </div>
                   <div className="flex-[0.1] md:flex-[1] h-[100%] items-end justify-between flex flex-col">
@@ -412,13 +410,17 @@ function Cart() {
                 </h1>
                 <span className="text-base font-[300]">
                   Sub-Total :{" "}
-                  {formatToCurrency(data?.cart?.cost?.subtotalAmount?.amount)}{" "}
-                  {data?.cart?.cost?.subtotalAmount?.currencyCode}
+                  {formatCurrency(
+                    data?.cart?.cost?.subtotalAmount?.amount,
+                    data?.cart?.cost?.subtotalAmount?.currencyCode
+                  )}
                 </span>
                 <span className="text-base font-[300]">
                   Total :{" "}
-                  {formatToCurrency(data?.cart?.cost?.totalAmount?.amount)}{" "}
-                  {data?.cart?.cost?.totalAmount?.currencyCode}
+                  {formatCurrency(
+                    data?.cart?.cost?.totalAmount?.amount,
+                    data?.cart?.cost?.totalAmount?.currencyCode
+                  )}
                 </span>
                 {checkoutUrl && (
                   <button
