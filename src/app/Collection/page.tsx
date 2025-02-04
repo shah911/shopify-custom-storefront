@@ -98,10 +98,11 @@ function ProductCollection() {
   const searchParam = useSearchParams();
   const q = searchParam.get("q");
   const sortKey = searchParam.get("sortKey");
+  const query = q?.split("_").join(" OR ");
 
   const fetchProducts = async ({ pageParam = null }) => {
     const { data, errors } = await storeFront(print(productQuery), {
-      tag: `tag:${!q ? "watches" : q}`,
+      tag: `tag:${!query ? "watches" : `${query} AND watches`}`,
       sortKeyValue: sortKey,
       sortOrder: !sortKey ? false : true,
       cursor: pageParam,

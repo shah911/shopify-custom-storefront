@@ -5,16 +5,16 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
 const menu = {
-  initial: { scaleX: 0, transformOrigin: "left" },
+  initial: { x: "-100%" },
   animate: {
-    scaleX: 1,
+    x: 0,
     transition: {
       type: "tween",
       ease: [0.39, 0.575, 0.5649999999999999, 1],
     },
   },
   exit: {
-    scaleX: 0,
+    x: "-100%",
     transition: { type: "tween", ease: [0.39, 0.575, 0.5649999999999999, 1] },
   },
 };
@@ -80,9 +80,13 @@ function SideBarMenu() {
                     {section.items.map((item, i) => (
                       <li key={i} className="p-2 cursor-pointer w-fit">
                         {section.title === "accessories" ? (
-                          <Link href={`/accessories/${item}`}>{item}</Link>
+                          <Link href={`/accessories/${item}`}>
+                            {item.replace(/-/g, " ")}
+                          </Link>
                         ) : (
-                          <Link href={`/Collection/${item}`}>{item}</Link>
+                          <Link href={`/Collection/${item}`}>
+                            {item.replace(/-/g, " ")}
+                          </Link>
                         )}
                       </li>
                     ))}

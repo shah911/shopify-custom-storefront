@@ -323,18 +323,18 @@ export const footerData5 = [
 export const sideBarData = [
   {
     title: "watches",
-    items: ["constellation", "seamaster", "speedmaster", "de ville"],
+    items: ["constellation", "seamaster", "speedmaster", "de-ville"],
   },
   {
     title: "accessories",
-    items: ["watch straps", "nato straps", "bracelets", "fine leather"],
+    items: ["watch-straps", "nato-straps", "bracelets", "fine-leather"],
   },
 ];
 
 export const option1 = [
   {
     title: "collection",
-    items: ["seamaster", "speedmaster", "constellation", "de ville"],
+    items: ["seamaster", "speedmaster", "constellation", "de-ville"],
   },
 ];
 
@@ -358,7 +358,7 @@ export const option3 = [
 export const option4 = [
   {
     title: "collection",
-    items: ["watch straps", "nato straps", "bracelets", "fine leather"],
+    items: ["watch-straps", "nato-straps", "bracelets", "fine-leather"],
   },
 ];
 

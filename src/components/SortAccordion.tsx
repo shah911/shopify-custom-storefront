@@ -51,11 +51,18 @@ function SortAccordion({ data, onAccessories }: SortAccordionProps) {
   const createQueryString = useCallback(
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams);
-      params.set(key, value);
+
+      if (params.get(key) === value) {
+        params.delete(key); // Remove query if the value already exists
+      } else {
+        params.set(key, value); // Otherwise, set the value
+      }
+
       return params.toString();
     },
     [searchParams]
   );
+
   return (
     <div className="h-[100%] flex flex-col justify-evenly">
       {data.map((section, index) => (

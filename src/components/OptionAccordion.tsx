@@ -43,7 +43,20 @@ function Accordions({ data, accessories }: AccordionsProps) {
   const createQueryString = useCallback(
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams);
-      params.set(key, value);
+      const existingValues = params.get(key)?.split("_") || [];
+
+      if (existingValues.includes(value)) {
+        // Remove item if it already exists
+        const updatedValues = existingValues.filter((v) => v !== value);
+        updatedValues.length > 0
+          ? params.set(key, updatedValues.join("_"))
+          : params.delete(key);
+      } else {
+        // Append new item
+        existingValues.push(value);
+        params.set(key, existingValues.join("_"));
+      }
+
       return params.toString();
     },
     [searchParams]
@@ -91,9 +104,11 @@ function Accordions({ data, accessories }: AccordionsProps) {
                           );
                         }}
                       >
-                        {item}
+                        {item.replace(/-/g, " ")}
                       </li>
-                      {query === item && <CheckIcon className="text-sm" />}
+                      {query?.split("_").includes(item) && (
+                        <CheckIcon className="text-sm" />
+                      )}
                     </div>
                   ))}
                 </ul>
