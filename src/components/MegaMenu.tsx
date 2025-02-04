@@ -21,7 +21,7 @@ const megaMenuLinks: MegaMenuLinksType = {
   constellation: constellation,
   seamaster: seamaster,
   speedmaster: speedmaster,
-  "de ville": deVille,
+  "de-ville": deVille,
   accessories: accessories,
 };
 
@@ -82,7 +82,7 @@ function MegaMenu() {
           className="flex items-center uppercase text-[13px] font-[500] px-4 cursor-pointer text-[#555555] h-[100%]"
           key={i}
         >
-          {link.title}
+          {link.title.replace(/-/g, " ")}
         </span>
       ))}
       <AnimatePresence mode="wait">

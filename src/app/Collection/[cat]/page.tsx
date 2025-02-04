@@ -3,6 +3,8 @@ import gql from "graphql-tag";
 import { print } from "graphql";
 import { storeFront } from "../../../../utils";
 import ErrPage from "@/components/ErrPage";
+import NotFound from "@/app/not-found";
+import { collectionItems } from "@/components/Data";
 
 const Query = gql`
   query Collection($title: String) {
@@ -33,8 +35,12 @@ const Query = gql`
 
 async function Products({ params }: { params: { cat: string } }) {
   const { cat } = params;
-  const catTitle = cat.replace(/%20/g, "+");
+  const catTitle = cat.replace(/-/g, " ");
   const { data, errors } = await storeFront(print(Query), { title: catTitle });
+
+  if (!collectionItems.includes(cat)) {
+    return <NotFound />;
+  }
 
   if (errors) {
     return <ErrPage />;

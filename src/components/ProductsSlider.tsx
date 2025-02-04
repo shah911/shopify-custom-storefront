@@ -81,7 +81,7 @@ function ProductsSlider({ title, ProductsList }: Props) {
     return () => window.removeEventListener("resize", updateMaxChars);
   }, []);
 
-  const Products = ProductsList?.collections.edges[0].node.products;
+  const Products = ProductsList?.collections?.edges[0]?.node?.products;
 
   useEffect(() => {
     const swiperInstance = swiperRef.current?.swiper;

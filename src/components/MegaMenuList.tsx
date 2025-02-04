@@ -51,7 +51,7 @@ function MegaMenuList({ tab, MegaMenuLinks }: Props) {
           key={tab}
         >
           <h1 className="font-[300] uppercase tracking-[10px] text-xl text-[#555555]">
-            {tab}
+            {tab.replace(/-/g, " ")}
           </h1>
           <div className="flex items-center">
             {MegaMenuLinks.map((link, i) => (
@@ -75,7 +75,7 @@ function MegaMenuList({ tab, MegaMenuLinks }: Props) {
                   />
                 </div>
                 <span className="font-[500] capitalize text-sm text-center text-[#555555]">
-                  {link.title}
+                  {link.title.replace(/-/g, " ")}
                 </span>
               </Link>
             ))}
@@ -83,7 +83,9 @@ function MegaMenuList({ tab, MegaMenuLinks }: Props) {
           <Link
             href={tab === "accessories" ? "/accessories" : `/Collection/${tab}`}
           >
-            <button className="btn uppercase text-[#555555]">all {tab}</button>
+            <button className="btn uppercase text-[#555555]">
+              all {tab.replace(/-/g, " ")}
+            </button>
           </Link>
         </motion.div>
       )}

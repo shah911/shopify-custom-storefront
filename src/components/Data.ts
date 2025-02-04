@@ -2,9 +2,24 @@ export const Links = [
   { title: "constellation" },
   { title: "seamaster" },
   { title: "speedmaster" },
-  { title: "de ville" },
+  { title: "de-ville" },
   { title: "accessories" },
   { title: "find your watch" },
+];
+
+export const collectionItems = [
+  "constellation",
+  "seamaster",
+  "speedmaster",
+  "de-ville",
+  "fine-leather",
+];
+
+export const accessoriesItems = [
+  "watch-straps",
+  "nato-straps",
+  "bracelets",
+  "fine-leather",
 ];
 
 export const constellation = [
@@ -98,12 +113,12 @@ export const deVille = [
 export const accessories = [
   {
     url: "https://cdn.shopify.com/s/files/1/0838/0429/1358/files/omega-watch-speedmaster-moonwatch-professional-black-rubber-strap-032Z017245_025STZ007387-l-1db18b.png?v=1700415321",
-    title: "watch straps",
+    title: "watch-straps",
     handle: "two-piece-strap",
   },
   {
     url: "https://cdn.shopify.com/s/files/1/0838/0429/1358/files/omega-nato-polyamide-summer-blue-strap-031Z016694W-l-fd439e.png?v=1700464791",
-    title: "nato straps",
+    title: "nato-straps",
     handle: "polyamide-summer-blue-strap",
   },
   {
@@ -113,7 +128,7 @@ export const accessories = [
   },
   {
     url: "https://cdn.shopify.com/s/files/1/0838/0429/1358/files/omega-fine-leather-wallets-7070210007-l-877080.png?v=1700467776",
-    title: "fine leather",
+    title: "fine-leather",
     handle: "wallet-black-with-nato-band-black-and-grey",
   },
 ];
