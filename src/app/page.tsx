@@ -4,6 +4,7 @@ import Section from "@/components/Section";
 export default function Home() {
   return (
     <div className="flex flex-col">
+      {/* comment out hero in dev mode */}
       <Hero />
       <div className="mb-6 lg:mb-0">
         <Section
