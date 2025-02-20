@@ -81,6 +81,33 @@ type ProductNode = {
   };
 };
 
+type CartItem = {
+  node: {
+    id: string;
+    quantity: number;
+    merchandise: {
+      product: {
+        images: {
+          edges: {
+            node: {
+              url: string;
+            };
+          }[];
+        };
+        title: string;
+        tags: string[];
+        variants: {
+          edges: {
+            node: {
+              id: string;
+            };
+          }[];
+        };
+      };
+    };
+  };
+};
+
 const singleProductQuery = gql`
   query singleProduct($handle: String!) {
     product(handle: $handle) {
@@ -127,6 +154,33 @@ const addToCartMutation = gql`
       userErrors {
         field
         message
+      }
+    }
+  }
+`;
+
+const getCartQuery = gql`
+  query getCart($ID: ID!) {
+    cart(id: $ID) {
+      lines(first: 100) {
+        edges {
+          node {
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                product {
+                  variants(first: 3) {
+                    edges {
+                      node {
+                        id
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -189,8 +243,62 @@ function YourWatch({ params }: YourWatchProps) {
   // Retrieve the cart data from cookies
   const cartId = Cookies.get("cartID");
 
+  // const AddToCart = useMutation(
+  //   async () => {
+  //     const { data, errors } = await storeFront(print(addToCartMutation), {
+  //       cartId: cartId,
+  //       variantId: variantId,
+  //     });
+
+  //     if (errors || data?.cartLinesAdd?.userErrors.length) {
+  //       throw new Error(
+  //         data?.cartLinesAdd?.userErrors[0]?.message ||
+  //           "something went wrong while adding this item to the cart"
+  //       );
+  //     }
+
+  //     return data;
+  //   },
+  //   {
+  //     onSuccess: (data) => {
+  //       setTotalQuantity(data?.cartLinesAdd?.cart?.totalQuantity);
+  //       setErr(true);
+  //       setErrMsg("successfully added item to the cart");
+  //       setAddingItem(false);
+  //     },
+  //     onError: () => {
+  //       setErr(true);
+  //       setErrMsg("something went wrong while adding this item to the cart");
+  //       setAddingItem(false);
+  //     },
+  //   }
+  // );
+
   const AddToCart = useMutation(
     async () => {
+      // Step 1: Fetch the cart data first
+      const { data: cartData, errors: cartErrors } = await storeFront(
+        print(getCartQuery),
+        { ID: cartId }
+      );
+
+      if (cartErrors) {
+        throw new Error("Failed to fetch cart data");
+      }
+
+      // Step 2: Check if the variant already has 2 items in the cart
+      const cartItems = cartData?.cart?.lines?.edges || [];
+      const existingItem = cartItems.find(
+        (item: CartItem) =>
+          item.node.merchandise?.product?.variants?.edges[0]?.node?.id ===
+          variantId
+      );
+
+      if (existingItem && existingItem.node.quantity >= 2) {
+        throw new Error("You can only add up to 2 of this product.");
+      }
+
+      // Step 3: Proceed with adding to cart
       const { data, errors } = await storeFront(print(addToCartMutation), {
         cartId: cartId,
         variantId: variantId,
@@ -199,7 +307,7 @@ function YourWatch({ params }: YourWatchProps) {
       if (errors || data?.cartLinesAdd?.userErrors.length) {
         throw new Error(
           data?.cartLinesAdd?.userErrors[0]?.message ||
-            "something went wrong while adding this item to the cart"
+            "Something went wrong while adding this item to the cart"
         );
       }
 
@@ -209,12 +317,15 @@ function YourWatch({ params }: YourWatchProps) {
       onSuccess: (data) => {
         setTotalQuantity(data?.cartLinesAdd?.cart?.totalQuantity);
         setErr(true);
-        setErrMsg("successfully added item to the cart");
+        setErrMsg("Successfully added item to the cart");
         setAddingItem(false);
       },
-      onError: () => {
+      onError: (error: any) => {
         setErr(true);
-        setErrMsg("something went wrong while adding this item to the cart");
+        setErrMsg(
+          error.message ||
+            "Something went wrong while adding this item to the cart"
+        );
         setAddingItem(false);
       },
     }

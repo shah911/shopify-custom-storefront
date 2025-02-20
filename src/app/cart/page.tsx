@@ -153,48 +153,28 @@ const removeAllCartItemsMutation = gql`
   }
 `;
 
-// const UpdateCartMutation = gql`
-//   mutation updateCartLines($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
-//     cartLinesUpdate(cartId: $cartId, lines: $lines) {
-//       userErrors {
-//         code
-//         field
-//         message
-//       }
-//       cart {
-//         id
-//         lines(first: 5) {
-//           edges {
-//             node {
-//               id
-//               quantity
-//               attributes {
-//                 key
-//                 value
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-// `;
-//for UpdateCartMutation
-// {
-//   "cartId": "",
-//   "lines":
-//       {
-//         "quantity": 2,
-//         "id": ""
-//       }
-// }
+const UpdateCartMutation = gql`
+  mutation updateCartLines($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      userErrors {
+        code
+        field
+        message
+      }
+      cart {
+        id
+        totalQuantity
+      }
+    }
+  }
+`;
 
 function Cart() {
   const [removingItem, setRemovingItem] = useState(false);
   const [errMsg, setErrMsg] = useState<undefined | string>();
   const [err, setErr] = useState(false);
   const queryClient = useQueryClient();
-  const { setTotalQuantity } = useContext(CartItemsContext);
+  const { totalQuantity, setTotalQuantity } = useContext(CartItemsContext);
 
   const cartId = Cookies.get("cartID");
   const checkoutUrl = Cookies.get("checkoutUrl");
@@ -287,6 +267,44 @@ function Cart() {
     setRemovingItem(true);
     removeItemMutation.mutate(id);
   };
+
+  const updateCartItemQuantity = useMutation(
+    async ({ quantity, lineId }: { quantity: number; lineId: string }) => {
+      const { data, errors } = await storeFront(print(UpdateCartMutation), {
+        cartId: cartId,
+        lines: {
+          quantity: quantity,
+          id: lineId,
+        },
+      });
+
+      if (errors || data?.cartLinesUpdate?.userErrors.length) {
+        throw new Error(
+          data?.cartLinesUpdate?.userErrors[0]?.message ||
+            "Error updating item quantity."
+        );
+      }
+
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        // Invalidate and refetch the cart query
+        queryClient.invalidateQueries("cartItems");
+        setTotalQuantity(data?.cartLinesUpdate?.cart?.totalQuantity);
+        setErr(true);
+        setErrMsg("Successfully updated item Quantity in the cart.");
+        setRemovingItem(false);
+      },
+      onError: () => {
+        setErr(true);
+        setErrMsg(
+          "Something went wrong while updating this item quantity in cart."
+        );
+        setRemovingItem(false);
+      },
+    }
+  );
 
   if (error) {
     return <ErrPage />;
@@ -423,9 +441,27 @@ function Cart() {
                     >
                       <CloseOutlined />
                     </button>
-                    <span className="text-base font-semibold">
-                      {item.node.quantity}
-                    </span>
+                    <select
+                      className="outline-none border border-black rounded-sm p-1"
+                      defaultValue={item.node.quantity}
+                      onChange={(e) => {
+                        const newQuantity = Number(e.target.value);
+                        if (newQuantity !== item.node.quantity) {
+                          setRemovingItem(true);
+                          updateCartItemQuantity.mutate({
+                            quantity: newQuantity,
+                            lineId: item.node.id,
+                          });
+                        }
+                      }}
+                    >
+                      {[...Array(3)]
+                        .map((_, i) => i)
+                        .slice(1)
+                        .map((num) => (
+                          <option key={num}>{num}</option>
+                        ))}
+                    </select>
                   </div>
                 </motion.div>
               ))}
@@ -452,7 +488,14 @@ function Cart() {
               </span>
               {checkoutUrl && (
                 <button
-                  onClick={() => (window.location.href = checkoutUrl)}
+                  onClick={() => {
+                    if (totalQuantity > 5) {
+                      setErr(true);
+                      setErrMsg("You can only purchase 5 products at a time.");
+                      return;
+                    }
+                    window.location.href = checkoutUrl;
+                  }}
                   className="btn-secondary z-10 uppercase border border-gray-400 text-lg px-6 py-2 text-center"
                 >
                   checkout
