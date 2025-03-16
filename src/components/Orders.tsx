@@ -55,8 +55,34 @@ const customerOrders = gql`
         }
         edges {
           node {
+            financialStatus
+            fulfillmentStatus
             id
+            shippingAddress {
+              name
+              phone
+              city
+            }
+            orderNumber
+            totalShippingPrice {
+              amount
+            }
+            totalPrice {
+              amount
+            }
             processedAt
+            trackingId: metafield(namespace: "custom", key: "tracking_id") {
+              value
+            }
+            courierService: metafield(
+              namespace: "custom"
+              key: "courier_service"
+            ) {
+              value
+            }
+            trackingUrl: metafield(namespace: "custom", key: "url") {
+              value
+            }
             currencyCode
             totalPrice {
               amount
@@ -64,10 +90,9 @@ const customerOrders = gql`
             lineItems(first: 10) {
               edges {
                 node {
+                  quantity
                   title
                   variant {
-                    # id
-                    # title
                     image {
                       url
                     }
@@ -112,7 +137,7 @@ function Orders() {
     staleTime: 6000,
   });
 
-  // console.log(data);
+  console.log(data);
 
   const { ref, inView } = useInView({
     threshold: 1,
