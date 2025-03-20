@@ -162,6 +162,7 @@ const addToCartMutation = gql`
 const getCartQuery = gql`
   query getCart($ID: ID!) {
     cart(id: $ID) {
+      totalQuantity
       lines(first: 100) {
         edges {
           node {
@@ -243,37 +244,6 @@ function YourWatch({ params }: YourWatchProps) {
   // Retrieve the cart data from cookies
   const cartId = Cookies.get("cartID");
 
-  // const AddToCart = useMutation(
-  //   async () => {
-  //     const { data, errors } = await storeFront(print(addToCartMutation), {
-  //       cartId: cartId,
-  //       variantId: variantId,
-  //     });
-
-  //     if (errors || data?.cartLinesAdd?.userErrors.length) {
-  //       throw new Error(
-  //         data?.cartLinesAdd?.userErrors[0]?.message ||
-  //           "something went wrong while adding this item to the cart"
-  //       );
-  //     }
-
-  //     return data;
-  //   },
-  //   {
-  //     onSuccess: (data) => {
-  //       setTotalQuantity(data?.cartLinesAdd?.cart?.totalQuantity);
-  //       setErr(true);
-  //       setErrMsg("successfully added item to the cart");
-  //       setAddingItem(false);
-  //     },
-  //     onError: () => {
-  //       setErr(true);
-  //       setErrMsg("something went wrong while adding this item to the cart");
-  //       setAddingItem(false);
-  //     },
-  //   }
-  // );
-
   const AddToCart = useMutation(
     async () => {
       // Step 1: Fetch the cart data first
@@ -284,6 +254,10 @@ function YourWatch({ params }: YourWatchProps) {
 
       if (cartErrors) {
         throw new Error("Failed to fetch cart data");
+      }
+
+      if (cartData.cart.totalQuantity >= 5) {
+        throw new Error("You can only add upto 5 items in your cart.");
       }
 
       // Step 2: Check if the variant already has 2 items in the cart

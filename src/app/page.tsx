@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* comment out hero in dev mode */}
-      <Hero />
+      {/* <Hero /> */}
       <div className="mb-6 lg:mb-0">
         <Section
           link="/yourwatch/diver-300m-co-axial-master-chronometer-42-mm"

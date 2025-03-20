@@ -74,12 +74,6 @@ const customerOrders = gql`
             trackingId: metafield(namespace: "custom", key: "tracking_id") {
               value
             }
-            courierService: metafield(
-              namespace: "custom"
-              key: "courier_service"
-            ) {
-              value
-            }
             trackingUrl: metafield(namespace: "custom", key: "url") {
               value
             }
