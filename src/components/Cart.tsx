@@ -78,11 +78,6 @@ function Cart() {
   const createCartMutation = useMutation({
     mutationFn: createCart,
     onSuccess: (newCart) => {
-      Cookies.set("cartID", newCart.id, { expires: 7, path: "/" });
-      Cookies.set("checkoutUrl", newCart.checkoutUrl, {
-        expires: 7,
-        path: "/",
-      });
       setTotalQuantity(0);
       queryClient.setQueryData(["cart", newCart.id], newCart);
     },
@@ -93,7 +88,7 @@ function Cart() {
     if (!cartID || !checkoutUrl) {
       createCartMutation.mutate();
     }
-  }, [cartID, checkoutUrl, createCartMutation]);
+  }, [cartID, checkoutUrl]);
 
   return (
     <Link href="/cart">
