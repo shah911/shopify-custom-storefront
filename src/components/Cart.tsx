@@ -36,7 +36,10 @@ const getCartQuery = gql`
 `;
 
 // Fetch cart data
-async function fetchCart(cartID: string) {
+async function fetchCart(cartID: string | undefined) {
+  if (!cartID) {
+    throw new Error("No cartID provided.");
+  }
   const { data, errors } = await storeFront(print(getCartQuery), {
     ID: cartID,
   });
@@ -66,11 +69,12 @@ function Cart() {
   // Fetch Cart with React Query
   useQuery({
     queryKey: ["cart", cartID],
-    queryFn: () => (cartID ? fetchCart(cartID) : Promise.reject("No Cart ID")),
+    queryFn: () => fetchCart(cartID),
     onSuccess: (data) => setTotalQuantity(data?.totalQuantity || 0),
     onError: () => {
       setTotalQuantity(0);
     },
+    enabled: !!cartID,
     retry: 2,
   });
 
